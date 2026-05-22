@@ -1,0 +1,2150 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wandr — Authentic Travel Map for Gen Z</title>
+<meta name="description" content="Google Maps + Instagram + BeReal cho du lịch. Realtime check-in, hidden gems, verified visit. Pitch deck cho nhà đầu tư." />
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #05060a;
+    --bg-soft: #0a0c14;
+    --accent: #7c5cff;
+    --accent-2: #22d3ee;
+    --accent-3: #f472b6;
+    --text: #e7e9ee;
+    --muted: #8a8fa3;
+    --border: rgba(255,255,255,0.08);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+  h1, h2, h3, h4, .display { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em; }
+  .grain {
+    position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+  }
+  .glow {
+    position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.45; pointer-events: none; z-index: 0;
+  }
+  .glow-1 { width: 600px; height: 600px; background: #7c5cff; top: -200px; left: -150px; }
+  .glow-2 { width: 500px; height: 500px; background: #22d3ee; top: 200px; right: -150px; opacity: 0.3; }
+  .glow-3 { width: 400px; height: 400px; background: #f472b6; bottom: -100px; left: 30%; opacity: 0.2; }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #fff 0%, #c4b5fd 30%, #7c5cff 60%, #22d3ee 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .gradient-border {
+    position: relative;
+    background: linear-gradient(180deg, rgba(20,22,32,0.7), rgba(10,12,20,0.7));
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+  }
+  .gradient-border::before {
+    content: ''; position: absolute; inset: 0; padding: 1px; border-radius: 20px;
+    background: linear-gradient(135deg, rgba(124,92,255,0.4), transparent 40%, transparent 60%, rgba(34,211,238,0.3));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 999px;
+    background: rgba(124,92,255,0.1);
+    border: 1px solid rgba(124,92,255,0.25);
+    font-size: 13px; color: #c4b5fd; font-weight: 500;
+  }
+  .chip-dot { width: 6px; height: 6px; border-radius: 50%; background: #22d3ee; box-shadow: 0 0 12px #22d3ee; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .btn-primary {
+    background: linear-gradient(135deg, #7c5cff, #5b3df0);
+    color: #fff; font-weight: 600; padding: 14px 28px; border-radius: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 10px 40px -10px rgba(124,92,255,0.6);
+    display: inline-block;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 50px -10px rgba(124,92,255,0.7); }
+  .btn-secondary {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    color: #fff; font-weight: 500; padding: 14px 28px; border-radius: 12px;
+    transition: background 0.2s; display: inline-block;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.08); }
+  nav.top {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    backdrop-filter: blur(20px);
+    background: rgba(5,6,10,0.6);
+    border-bottom: 1px solid var(--border);
+  }
+  .section-eyebrow {
+    color: var(--accent); font-weight: 600; font-size: 13px;
+    letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px;
+  }
+  .stat-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(36px, 5vw, 56px); font-weight: 700; line-height: 1;
+    background: linear-gradient(135deg, #fff, #7c5cff);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .card-hover { transition: transform 0.3s, border-color 0.3s; }
+  .card-hover:hover { transform: translateY(-4px); }
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .map-mock {
+    position: relative; width: 100%; aspect-ratio: 9/16; max-width: 320px;
+    background: linear-gradient(135deg, #0d1020, #1a0d2e);
+    border-radius: 36px; overflow: hidden;
+    border: 8px solid #0a0c14;
+    box-shadow: 0 40px 80px -20px rgba(124,92,255,0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
+  }
+  .pin {
+    position: absolute; width: 36px; height: 36px;
+    background: linear-gradient(135deg, #7c5cff, #22d3ee);
+    border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(124,92,255,0.6);
+    animation: float 3s ease-in-out infinite;
+  }
+  .pin::after { content: ''; width: 12px; height: 12px; background: #fff; border-radius: 50%; transform: rotate(45deg); }
+  @keyframes float { 0%,100% { transform: rotate(-45deg) translateY(0); } 50% { transform: rotate(-45deg) translateY(-6px); } }
+  .roadmap-item { position: relative; padding-left: 32px; }
+  .roadmap-item::before {
+    content: ''; position: absolute; left: 0; top: 8px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: linear-gradient(135deg, #7c5cff, #22d3ee);
+    box-shadow: 0 0 20px rgba(124,92,255,0.6);
+  }
+  .roadmap-item::after {
+    content: ''; position: absolute; left: 7px; top: 24px; bottom: -32px;
+    width: 2px; background: linear-gradient(180deg, rgba(124,92,255,0.4), transparent);
+  }
+  .roadmap-item:last-child::after { display: none; }
+  table.benchmark th, table.benchmark td { padding: 12px 16px; border-bottom: 1px solid var(--border); text-align: left; font-size: 14px; }
+  table.benchmark th { color: var(--muted); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; }
+  table.benchmark tbody tr:hover { background: rgba(255,255,255,0.02); }
+  .num-positive { color: #34d399; font-weight: 600; }
+  .num-warn { color: #fbbf24; font-weight: 600; }
+  .num-negative { color: #f87171; font-weight: 600; }
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s, transform 0.8s; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .marquee {
+    display: flex; gap: 48px; animation: scroll 30s linear infinite;
+    white-space: nowrap;
+  }
+  @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  .marquee-item { color: var(--muted); font-size: 14px; display: flex; align-items: center; gap: 12px; }
+  .feature-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: linear-gradient(135deg, rgba(124,92,255,0.2), rgba(34,211,238,0.1));
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(124,92,255,0.3);
+    font-size: 22px;
+  }
+  details summary { cursor: pointer; list-style: none; padding: 20px 0; display: flex; justify-content: space-between; align-items: center; }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after { content: '+'; font-size: 24px; color: var(--accent); transition: transform 0.2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+
+  /* Phone mockup system */
+  .phone {
+    position: relative; width: 100%; max-width: 280px; aspect-ratio: 9/19.5;
+    background: #0a0c14; border-radius: 38px; padding: 8px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 40px 80px -20px rgba(124,92,255,0.3), 0 0 0 1px rgba(255,255,255,0.04) inset;
+  }
+  .phone-screen {
+    width: 100%; height: 100%; border-radius: 30px;
+    background: linear-gradient(180deg, #0d1020, #14091f);
+    overflow: hidden; position: relative;
+    display: flex; flex-direction: column;
+  }
+  .phone-notch {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 90px; height: 22px; background: #0a0c14;
+    border-bottom-left-radius: 14px; border-bottom-right-radius: 14px;
+    z-index: 20;
+  }
+  .status-bar {
+    padding: 10px 22px 6px; display: flex; justify-content: space-between;
+    font-size: 10px; color: rgba(255,255,255,0.7); font-weight: 600; padding-top: 14px;
+  }
+  .tab-bar {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(10,12,20,0.92); backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; justify-content: space-around; padding: 10px 0 18px;
+    font-size: 18px;
+  }
+  .tab-bar .tab { opacity: 0.4; }
+  .tab-bar .tab.active { opacity: 1; color: #7c5cff; }
+  .phone-content { flex: 1; overflow: hidden; position: relative; padding-bottom: 60px; }
+
+  /* Map screen */
+  .map-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 30% 40%, rgba(124,92,255,0.25), transparent 50%),
+      radial-gradient(circle at 70% 60%, rgba(34,211,238,0.18), transparent 50%),
+      linear-gradient(135deg, #0d1020, #1a0d2e);
+  }
+  .map-grid {
+    position: absolute; inset: 0; opacity: 0.4;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+  .mini-pin {
+    position: absolute; width: 22px; height: 22px;
+    background: linear-gradient(135deg, #7c5cff, #22d3ee);
+    border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
+    box-shadow: 0 2px 12px rgba(124,92,255,0.5);
+  }
+  .mini-pin::after {
+    content: ''; width: 7px; height: 7px; background: #fff; border-radius: 50%;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(45deg);
+  }
+  .mini-pin.cluster {
+    border-radius: 50%; transform: none; width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 11px; font-weight: 700;
+  }
+  .mini-pin.cluster::after { display: none; }
+  .search-overlay {
+    position: absolute; top: 38px; left: 12px; right: 12px; z-index: 5;
+  }
+  .search-pill {
+    background: rgba(10,12,20,0.85); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 999px;
+    padding: 10px 16px; font-size: 11px; color: rgba(255,255,255,0.6);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .filter-row { display: flex; gap: 6px; margin-top: 10px; overflow: hidden; }
+  .filter-chip {
+    background: rgba(10,12,20,0.85); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 999px;
+    padding: 5px 12px; font-size: 10px; color: rgba(255,255,255,0.7); white-space: nowrap;
+  }
+  .filter-chip.active { background: rgba(124,92,255,0.25); border-color: rgba(124,92,255,0.5); color: #c4b5fd; }
+  .post-card-mini {
+    position: absolute; bottom: 70px; left: 10px; right: 10px;
+    background: rgba(10,12,20,0.92); backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+    padding: 10px; display: flex; gap: 10px;
+  }
+  .post-thumb {
+    width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0;
+    background: linear-gradient(135deg, #f472b6, #7c5cff);
+  }
+
+  /* Camera screen */
+  .camera-viewfinder {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, #1a1a2e, #0a0c14);
+  }
+  .camera-viewfinder::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 40% 30%, rgba(244,114,182,0.3), transparent 50%),
+      radial-gradient(circle at 60% 70%, rgba(124,92,255,0.3), transparent 60%);
+  }
+  .gps-chip {
+    position: absolute; top: 50px; left: 50%; transform: translateX(-50%);
+    background: rgba(10,12,20,0.85); backdrop-filter: blur(10px);
+    border: 1px solid rgba(52,211,153,0.4); border-radius: 999px;
+    padding: 6px 12px; font-size: 10px; color: #34d399;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .gps-dot { width: 6px; height: 6px; border-radius: 50%; background: #34d399; box-shadow: 0 0 8px #34d399; }
+  .shutter {
+    position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%);
+    width: 64px; height: 64px; border-radius: 50%;
+    border: 4px solid #fff; padding: 4px;
+  }
+  .shutter::after {
+    content: ''; display: block; width: 100%; height: 100%; border-radius: 50%;
+    background: #fff;
+  }
+  .camera-hint {
+    position: absolute; bottom: 170px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; color: rgba(255,255,255,0.7); white-space: nowrap;
+  }
+
+  /* Feed/post screen */
+  .feed-header {
+    padding: 14px; display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, #f472b6, #7c5cff);
+    flex-shrink: 0;
+  }
+  .feed-photo {
+    width: 100%; aspect-ratio: 4/5;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(251,191,36,0.4), transparent 60%),
+      linear-gradient(135deg, #f472b6, #7c5cff, #22d3ee);
+  }
+  .feed-actions {
+    padding: 10px 14px; display: flex; gap: 14px; font-size: 16px;
+  }
+  .feed-actions > span:last-child { margin-left: auto; }
+  .feed-caption { padding: 0 14px 12px; font-size: 11px; color: rgba(255,255,255,0.85); }
+  .feed-caption .place { color: #c4b5fd; font-weight: 600; }
+
+  /* Profile screen */
+  .profile-header {
+    padding: 30px 16px 14px; text-align: center;
+  }
+  .profile-avatar {
+    width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 10px;
+    background: linear-gradient(135deg, #f472b6, #7c5cff);
+    border: 3px solid rgba(124,92,255,0.4);
+  }
+  .profile-stats {
+    display: flex; justify-content: space-around; padding: 12px 0;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 10px;
+  }
+  .profile-stats > div { text-align: center; }
+  .profile-stats .num { font-size: 14px; font-weight: 700; display: block; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; padding: 6px; }
+  .grid-cell { aspect-ratio: 1; border-radius: 6px; }
+  .grid-cell.g1 { background: linear-gradient(135deg, #f472b6, #7c5cff); }
+  .grid-cell.g2 { background: linear-gradient(135deg, #22d3ee, #7c5cff); }
+  .grid-cell.g3 { background: linear-gradient(135deg, #fbbf24, #f472b6); }
+  .grid-cell.g4 { background: linear-gradient(135deg, #34d399, #22d3ee); }
+  .grid-cell.g5 { background: linear-gradient(135deg, #7c5cff, #f472b6); }
+  .grid-cell.g6 { background: linear-gradient(135deg, #22d3ee, #34d399); }
+
+  /* Place detail screen */
+  .place-hero {
+    height: 140px;
+    background: linear-gradient(135deg, #f472b6, #7c5cff, #22d3ee);
+    position: relative;
+  }
+  .place-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(10,12,20,0.85));
+  }
+  .place-info { padding: 14px; }
+  .place-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .place-meta { font-size: 10px; color: rgba(255,255,255,0.6); display: flex; gap: 8px; align-items: center; }
+  .badge-verified {
+    background: rgba(52,211,153,0.15); color: #34d399;
+    padding: 2px 8px; border-radius: 999px; font-size: 9px;
+  }
+  .place-stats {
+    display: flex; padding: 10px 14px; gap: 8px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .place-stat-box {
+    flex: 1; background: rgba(255,255,255,0.03); border-radius: 10px;
+    padding: 8px; text-align: center;
+  }
+  .place-stat-box .v { font-size: 13px; font-weight: 700; color: #c4b5fd; }
+  .place-stat-box .l { font-size: 9px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+  .place-reviews { padding: 6px 10px; display: flex; flex-direction: column; gap: 6px; }
+  .review-mini {
+    background: rgba(255,255,255,0.03); border-radius: 10px;
+    padding: 8px; display: flex; gap: 8px; align-items: center;
+  }
+  .review-mini .av { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, #22d3ee, #7c5cff); }
+  .review-mini .txt { font-size: 9px; color: rgba(255,255,255,0.8); line-height: 1.4; }
+
+  .phones-row {
+    display: flex; gap: 24px; overflow-x: auto; padding: 20px 0 30px;
+    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+  }
+  .phones-row > * { scroll-snap-align: center; flex-shrink: 0; }
+  @media (min-width: 1024px) {
+    .phones-row { justify-content: center; flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- NAV -->
+<nav class="top">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-cyan-400 flex items-center justify-center font-bold">W</div>
+      <span class="font-semibold text-lg">Wandr</span>
+    </div>
+    <div class="hidden md:flex items-center gap-8 text-sm text-gray-400">
+      <a href="#problem" class="hover:text-white">Vấn đề</a>
+      <a href="#solution" class="hover:text-white">Giải pháp</a>
+      <a href="#screens" class="hover:text-white">Sản phẩm</a>
+      <a href="#market" class="hover:text-white">Thị trường</a>
+      <a href="#retention" class="hover:text-white">Retention</a>
+      <a href="#roadmap" class="hover:text-white">Roadmap</a>
+      <a href="#ask" class="hover:text-white">Đầu tư</a>
+    </div>
+    <a href="#ask" class="btn-primary text-sm" style="padding: 10px 20px;">Liên hệ</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden">
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+  <div class="grid-bg absolute inset-0 opacity-40"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+    <div class="reveal">
+      <span class="chip mb-6"><span class="chip-dot"></span>Pre-seed · VN-first · 2026</span>
+      <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+        Bản đồ <span class="gradient-text">du lịch thật</span> cho thế hệ ghét review fake.
+      </h1>
+      <p class="text-lg text-gray-400 mb-8 max-w-xl">
+        Wandr là Google Maps + Instagram + BeReal cho du lịch. Mọi check-in đều có GPS xác thực, ảnh chụp trong app, không filter ảo. Khám phá hidden gem qua trải nghiệm người thật, realtime, hyperlocal.
+      </p>
+      <div class="flex flex-wrap gap-4 mb-12">
+        <a href="#ask" class="btn-primary">Xem cơ hội đầu tư</a>
+        <a href="#solution" class="btn-secondary">Sản phẩm hoạt động ra sao</a>
+      </div>
+      <div class="grid grid-cols-3 gap-6 max-w-md">
+        <div>
+          <div class="stat-num">$25B</div>
+          <div class="text-xs text-gray-500 mt-2">SAM SEA + Đông Á</div>
+        </div>
+        <div>
+          <div class="stat-num">300M</div>
+          <div class="text-xs text-gray-500 mt-2">Xiaohongshu validated</div>
+        </div>
+        <div>
+          <div class="stat-num">85%</div>
+          <div class="text-xs text-gray-500 mt-2">App social fail rate</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative flex justify-center reveal">
+      <div class="map-mock">
+        <div class="absolute inset-0" style="background-image: radial-gradient(circle at 30% 40%, rgba(124,92,255,0.3), transparent 50%), radial-gradient(circle at 70% 60%, rgba(34,211,238,0.2), transparent 50%);"></div>
+        <div class="absolute inset-0 grid-bg opacity-30"></div>
+        <div class="pin" style="top: 25%; left: 30%;"></div>
+        <div class="pin" style="top: 45%; left: 55%; animation-delay: 0.4s;"></div>
+        <div class="pin" style="top: 60%; left: 25%; animation-delay: 0.8s;"></div>
+        <div class="pin" style="top: 70%; left: 65%; animation-delay: 1.2s;"></div>
+        <div class="pin" style="top: 35%; left: 75%; animation-delay: 1.6s;"></div>
+        <div class="absolute bottom-6 left-4 right-4 p-4 rounded-2xl" style="background: rgba(10,12,20,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1);">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-purple-500"></div>
+            <div>
+              <div class="text-xs font-semibold">Linh · 2 phút trước</div>
+              <div class="text-xs text-gray-400 flex items-center gap-1">📍 Cộng Cà Phê Đà Lạt <span class="text-green-400">✓ Verified</span></div>
+            </div>
+          </div>
+          <div class="text-xs text-gray-300">"View phố cực xinh, ít người buổi chiều ☕"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGOS/SIGNAL MARQUEE -->
+<section class="border-y border-white/5 py-8 overflow-hidden">
+  <div class="marquee">
+    <div class="marquee-item">📈 TikTok #hiddengem · 8.1B views</div>
+    <div class="marquee-item">🇨🇳 Xiaohongshu 300M MAU validated</div>
+    <div class="marquee-item">☕ 30,000+ café HCM + Hà Nội</div>
+    <div class="marquee-item">✈️ 110M chuyến nội địa VN 2025</div>
+    <div class="marquee-item">📱 VN top 6 TikTok user toàn cầu</div>
+    <div class="marquee-item">🎯 280k search/tháng "quán đẹp gần đây"</div>
+    <div class="marquee-item">📈 TikTok #hiddengem · 8.1B views</div>
+    <div class="marquee-item">🇨🇳 Xiaohongshu 300M MAU validated</div>
+    <div class="marquee-item">☕ 30,000+ café HCM + Hà Nội</div>
+    <div class="marquee-item">✈️ 110M chuyến nội địa VN 2025</div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem" class="py-32 relative">
+  <div class="glow glow-3"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <div class="text-center max-w-3xl mx-auto mb-20 reveal">
+      <div class="section-eyebrow">Vấn Đề</div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">Du khách <span class="gradient-text">không tin</span> những gì mình thấy nữa.</h2>
+      <p class="text-gray-400 text-lg">3 platform đang chia nhau pain — không ai giải quyết trọn vẹn.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="gradient-border p-8 card-hover reveal">
+        <div class="text-3xl mb-4">📸</div>
+        <h3 class="text-xl font-semibold mb-3">Instagram / TikTok</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Ảnh quá filter. Video cũ. Geotag sai hoặc thiếu. Không biết quán đó còn tồn tại hay đang đông không.</p>
+      </div>
+      <div class="gradient-border p-8 card-hover reveal">
+        <div class="text-3xl mb-4">🗺️</div>
+        <h3 class="text-xl font-semibold mb-3">Google Maps</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Review fake tràn lan. Không có vibe, aesthetic. UX 2015. Không biết hidden gem, chỉ thấy tourist trap top.</p>
+      </div>
+      <div class="gradient-border p-8 card-hover reveal">
+        <div class="text-3xl mb-4">⭐</div>
+        <h3 class="text-xl font-semibold mb-3">Foody / TripAdvisor</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Data cũ. Sponsored bias. Không social. Không realtime. Khó tìm thứ "đang hot tuần này".</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section id="solution" class="py-32 relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center max-w-3xl mx-auto mb-20 reveal">
+      <div class="section-eyebrow">Giải Pháp</div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">Map-first. <span class="gradient-text">Verified visit.</span> Realtime.</h2>
+      <p class="text-gray-400 text-lg">Mọi post đều có GPS thật, chụp trong app, không upload từ thư viện. Map là Home tab, không phải feed.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="gradient-border p-8 card-hover reveal">
+        <div class="feature-icon mb-5">📍</div>
+        <h3 class="text-lg font-semibold mb-2">Verified Visit</h3>
+        <p class="text-gray-400 text-sm">GPS attest + anti-spoof + cross-check sensor. Pin xanh = trust, pin xám = chưa xác thực.</p>
+      </div>
+      <div class="gradient-border p-8 card-hover reveal">
+        <div class="feature-icon mb-5">🗺️</div>
+        <h3 class="text-lg font-semibold mb-2">Realtime Map Feed</h3>
+        <p class="text-gray-400 text-sm">Bài đăng pulse trên map trong 24h. Heatmap mật độ. Cluster thông minh ≤200 pin/viewport.</p>
+      </div>
+      <div class="gradient-border p-8 card-hover reveal">
+        <div class="feature-icon mb-5">💎</div>
+        <h3 class="text-lg font-semibold mb-2">Hidden Gem Algo</h3>
+        <p class="text-gray-400 text-sm">Score riêng: save_rate × (1 / log(post_count)) × tác giả đa dạng. Tìm chỗ thực sự đáng đi.</p>
+      </div>
+      <div class="gradient-border p-8 card-hover reveal">
+        <div class="feature-icon mb-5">🤖</div>
+        <h3 class="text-lg font-semibold mb-2">AI Vibe Search</h3>
+        <p class="text-gray-400 text-sm">"chill sunset cafe" → CLIP embedding → ANN search. Tìm theo cảm xúc, không chỉ keyword.</p>
+      </div>
+      <div class="gradient-border p-8 card-hover reveal">
+        <div class="feature-icon mb-5">🎮</div>
+        <h3 class="text-lg font-semibold mb-2">Gamification</h3>
+        <p class="text-gray-400 text-sm">Explorer level, badge city/country, trip recap auto-video share IG.</p>
+      </div>
+      <div class="gradient-border p-8 card-hover reveal">
+        <div class="feature-icon mb-5">🛡️</div>
+        <h3 class="text-lg font-semibold mb-2">Trust Score</h3>
+        <p class="text-gray-400 text-sm">Behavioral signal không fake được. Gating sponsored + chống bot ngày 1.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET -->
+<section id="market" class="py-32 relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center max-w-3xl mx-auto mb-20 reveal">
+      <div class="section-eyebrow">Thị Trường</div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">Cửa sổ <span class="gradient-text">18-36 tháng</span> trước khi big tech vào.</h2>
+      <p class="text-gray-400 text-lg">SEA travel-tech $30B GMV 2030. Mảng social discovery chưa ai làm tốt.</p>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-6 mb-16">
+      <div class="gradient-border p-8 reveal">
+        <div class="text-sm text-gray-500 mb-2">TAM</div>
+        <div class="stat-num mb-4">$184B</div>
+        <div class="text-sm text-gray-400">Social commerce + discovery slice của travel global $2.3T.</div>
+      </div>
+      <div class="gradient-border p-8 reveal" style="border-color: rgba(124,92,255,0.3);">
+        <div class="text-sm text-gray-500 mb-2">SAM — SEA + Đông Á trẻ</div>
+        <div class="stat-num mb-4">$25B</div>
+        <div class="text-sm text-gray-400">167M user 18-35 tuổi, smartphone 92%, du lịch ≥1/năm 65%.</div>
+      </div>
+      <div class="gradient-border p-8 reveal">
+        <div class="text-sm text-gray-500 mb-2">SOM năm 5</div>
+        <div class="stat-num mb-4">$24-60M</div>
+        <div class="text-sm text-gray-400">3-5M MAU, ARPU $8-12. Series B viable, niche dominant.</div>
+      </div>
+    </div>
+
+    <div class="gradient-border p-8 reveal">
+      <h3 class="text-2xl font-bold mb-6">Vì sao VN là beachhead</h3>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div>
+          <div class="text-3xl font-bold gradient-text">28M</div>
+          <div class="text-sm text-gray-400 mt-1">Người 18-35</div>
+        </div>
+        <div>
+          <div class="text-3xl font-bold gradient-text">50M+</div>
+          <div class="text-sm text-gray-400 mt-1">TikTok user (top 6)</div>
+        </div>
+        <div>
+          <div class="text-3xl font-bold gradient-text">$1.2B</div>
+          <div class="text-sm text-gray-400 mt-1">Café spend GenZ/năm</div>
+        </div>
+        <div>
+          <div class="text-3xl font-bold gradient-text">4x/tuần</div>
+          <div class="text-sm text-gray-400 mt-1">GenZ ngồi café</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITORS -->
+<section class="py-32 relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+      <div class="section-eyebrow">Cạnh Tranh</div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">Không ai làm <span class="gradient-text">map + social + verified</span> cùng lúc.</h2>
+    </div>
+
+    <div class="gradient-border overflow-hidden reveal">
+      <table class="benchmark w-full">
+        <thead style="background: rgba(124,92,255,0.05);">
+          <tr>
+            <th>App</th>
+            <th>MAU</th>
+            <th>Map-first</th>
+            <th>Verified</th>
+            <th>Social</th>
+            <th>Threat</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Instagram</strong></td><td>2B</td><td class="num-negative">✗</td><td class="num-negative">✗</td><td class="num-positive">✓</td><td>High</td></tr>
+          <tr><td><strong>TikTok</strong></td><td>1.5B</td><td class="num-negative">✗</td><td class="num-negative">✗</td><td class="num-positive">✓</td><td>High</td></tr>
+          <tr><td><strong>Google Maps</strong></td><td>1B</td><td class="num-positive">✓</td><td class="num-warn">~</td><td class="num-negative">✗</td><td>Medium</td></tr>
+          <tr><td><strong>Xiaohongshu</strong></td><td>300M</td><td class="num-negative">✗</td><td class="num-warn">~</td><td class="num-positive">✓</td><td>High (nếu vào SEA)</td></tr>
+          <tr><td><strong>Lemon8</strong></td><td>38M</td><td class="num-negative">✗</td><td class="num-negative">✗</td><td class="num-positive">✓</td><td>Medium</td></tr>
+          <tr><td><strong>Polarsteps</strong></td><td>12M</td><td class="num-warn">~</td><td class="num-negative">✗</td><td class="num-negative">✗</td><td>Low</td></tr>
+          <tr style="background: rgba(124,92,255,0.08);"><td><strong style="color: #c4b5fd;">Wandr</strong></td><td>—</td><td class="num-positive">✓</td><td class="num-positive">✓</td><td class="num-positive">✓</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- RETENTION -->
+<section id="retention" class="py-32 relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+      <div class="section-eyebrow">Retention Benchmark</div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">Target <span class="gradient-text">70-80%</span> mức Xiaohongshu năm 3.</h2>
+      <p class="text-gray-400 text-lg">Magic number: user W1 làm ≥3 action → D30 jump 4-6x.</p>
+    </div>
+
+    <div class="gradient-border overflow-hidden reveal">
+      <table class="benchmark w-full">
+        <thead style="background: rgba(124,92,255,0.05);">
+          <tr>
+            <th>Metric</th>
+            <th>Tháng 3</th>
+            <th>Tháng 6</th>
+            <th>Tháng 12</th>
+            <th>Năm 2</th>
+            <th>Năm 3</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>D1</td><td>38%</td><td>48%</td><td>55%</td><td>60%</td><td class="num-positive">65%</td></tr>
+          <tr><td>D7</td><td>22%</td><td>30%</td><td>38%</td><td>45%</td><td class="num-positive">50%</td></tr>
+          <tr><td><strong>D30</strong></td><td class="num-warn">12%</td><td>17%</td><td>25%</td><td>32%</td><td class="num-positive">38%</td></tr>
+          <tr><td>M6</td><td>—</td><td>4%</td><td>10%</td><td>16%</td><td class="num-positive">22%</td></tr>
+          <tr><td>DAU/MAU</td><td>15%</td><td>20%</td><td>28%</td><td>33%</td><td class="num-positive">38%</td></tr>
+          <tr><td>Posts/MAU/tháng</td><td>1.5</td><td>2.5</td><td>3.5</td><td>4</td><td class="num-positive">4.5</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- METRIC ANNOTATIONS -->
+    <div class="mt-8 grid md:grid-cols-2 gap-4 reveal">
+      <div class="gradient-border p-5">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="chip" style="background: rgba(124,92,255,0.15);">D1</span>
+          <strong>Day 1 Retention</strong>
+        </div>
+        <p class="text-sm text-gray-400">% user mở lại app sau 1 ngày install. Phản ánh chất lượng <strong class="text-white">onboarding + first-run experience</strong>. Dưới 35% = onboarding hỏng hoặc app không "hooked" được user ngay.</p>
+      </div>
+      <div class="gradient-border p-5">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="chip" style="background: rgba(124,92,255,0.15);">D7</span>
+          <strong>Day 7 Retention</strong>
+        </div>
+        <p class="text-sm text-gray-400">% user còn dùng sau 1 tuần. Đo <strong class="text-white">curiosity-to-habit transition</strong>. Cần đạt magic number action W1 để nhảy lên ngưỡng healthy.</p>
+      </div>
+      <div class="gradient-border p-5" style="border-color: rgba(244,114,182,0.3);">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="chip" style="background: rgba(244,114,182,0.15); color: #f9a8d4; border-color: rgba(244,114,182,0.3);">D30</span>
+          <strong>Day 30 Retention · KEY METRIC</strong>
+        </div>
+        <p class="text-sm text-gray-400">Metric quan trọng nhất. Phản ánh <strong class="text-white">true product-market fit</strong>. Đây là ngưỡng quyết định scale hay pivot. Benchmark Xiaohongshu 42%, BeReal chết ở 18%.</p>
+      </div>
+      <div class="gradient-border p-5">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="chip" style="background: rgba(124,92,255,0.15);">M6</span>
+          <strong>Month 6 Retention</strong>
+        </div>
+        <p class="text-sm text-gray-400">Đo <strong class="text-white">long-term stickiness</strong>. Curve phải flatten (không còn dốc xuống). Flatten = có habit thật, không flatten = leaky bucket.</p>
+      </div>
+      <div class="gradient-border p-5">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="chip" style="background: rgba(124,92,255,0.15);">DAU/MAU</span>
+          <strong>Stickiness Ratio</strong>
+        </div>
+        <p class="text-sm text-gray-400">Số DAU chia MAU. <strong class="text-white">Đo tần suất quay lại</strong>. IG 60%, TikTok 55%, BeReal 25%. Target ≥28% năm 1 cho travel-leaning app.</p>
+      </div>
+      <div class="gradient-border p-5">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="chip" style="background: rgba(124,92,255,0.15);">P/MAU/m</span>
+          <strong>Posts per MAU/Month</strong>
+        </div>
+        <p class="text-sm text-gray-400">Đo <strong class="text-white">supply-side health</strong>. Dưới 2 = creator side yếu, app sẽ thiếu content. Trên 4 = thị trường tự sản xuất nội dung.</p>
+      </div>
+    </div>
+
+    <!-- VISUAL CURVE EXPLAINER -->
+    <div class="mt-12 gradient-border p-8 reveal">
+      <div class="grid lg:grid-cols-2 gap-8 items-center">
+        <div>
+          <h3 class="text-2xl font-bold mb-3">🧠 Curve shape > số tuyệt đối</h3>
+          <p class="text-gray-400 text-sm mb-4">Một app có D30 thấp nhưng curve flatten tốt sẽ sống được. Ngược lại D30 cao mà tiếp tục dốc xuống = chết chậm.</p>
+          <div class="space-y-3 text-sm">
+            <div class="flex items-start gap-3">
+              <span class="text-green-400 mt-1">✓</span>
+              <div><strong>Healthy curve</strong> (Xiaohongshu, IG): D1 65% → D30 42% → M6 35%. Flat từ M3 = PMF.</div>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="text-red-400 mt-1">✗</span>
+              <div><strong>Leaky bucket</strong> (BeReal, Path): D1 55% → D30 18% → M6 3%. Vẫn dốc = không có core habit.</div>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="text-purple-400 mt-1">🎯</span>
+              <div><strong>Wandr target năm 2</strong>: D1 55% → D30 28% → M3 20% → M6 16% → M12 14%. Flatten từ M3.</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <svg viewBox="0 0 400 240" class="w-full">
+            <!-- Grid -->
+            <g stroke="rgba(255,255,255,0.05)" stroke-width="1">
+              <line x1="40" y1="20" x2="40" y2="200"/>
+              <line x1="40" y1="200" x2="380" y2="200"/>
+              <line x1="40" y1="60" x2="380" y2="60" stroke-dasharray="3,3"/>
+              <line x1="40" y1="100" x2="380" y2="100" stroke-dasharray="3,3"/>
+              <line x1="40" y1="140" x2="380" y2="140" stroke-dasharray="3,3"/>
+              <line x1="40" y1="180" x2="380" y2="180" stroke-dasharray="3,3"/>
+            </g>
+            <!-- Y axis labels -->
+            <g fill="rgba(255,255,255,0.4)" font-size="9" font-family="Inter">
+              <text x="30" y="22" text-anchor="end">100%</text>
+              <text x="30" y="62" text-anchor="end">75%</text>
+              <text x="30" y="102" text-anchor="end">50%</text>
+              <text x="30" y="142" text-anchor="end">25%</text>
+              <text x="30" y="182" text-anchor="end">10%</text>
+            </g>
+            <!-- X axis labels -->
+            <g fill="rgba(255,255,255,0.4)" font-size="9" font-family="Inter" text-anchor="middle">
+              <text x="60" y="218">D1</text>
+              <text x="130" y="218">D7</text>
+              <text x="200" y="218">D30</text>
+              <text x="270" y="218">M3</text>
+              <text x="340" y="218">M6</text>
+            </g>
+            <!-- Healthy curve (Xiaohongshu) -->
+            <path d="M 60 80 Q 95 90 130 100 T 200 120 T 270 130 T 340 138" stroke="#34d399" stroke-width="2.5" fill="none"/>
+            <circle cx="60" cy="80" r="4" fill="#34d399"/>
+            <circle cx="130" cy="100" r="4" fill="#34d399"/>
+            <circle cx="200" cy="120" r="4" fill="#34d399"/>
+            <circle cx="270" cy="130" r="4" fill="#34d399"/>
+            <circle cx="340" cy="138" r="4" fill="#34d399"/>
+
+            <!-- Wandr target -->
+            <path d="M 60 100 Q 95 120 130 138 T 200 158 T 270 172 T 340 178" stroke="#7c5cff" stroke-width="2.5" fill="none" stroke-dasharray="0"/>
+            <circle cx="60" cy="100" r="4" fill="#7c5cff"/>
+            <circle cx="130" cy="138" r="4" fill="#7c5cff"/>
+            <circle cx="200" cy="158" r="4" fill="#7c5cff"/>
+            <circle cx="270" cy="172" r="4" fill="#7c5cff"/>
+            <circle cx="340" cy="178" r="4" fill="#7c5cff"/>
+
+            <!-- Leaky bucket -->
+            <path d="M 60 110 Q 95 140 130 160 T 200 185 T 270 195 T 340 199" stroke="#f87171" stroke-width="2.5" fill="none" stroke-dasharray="4,3"/>
+            <circle cx="60" cy="110" r="4" fill="#f87171"/>
+            <circle cx="130" cy="160" r="4" fill="#f87171"/>
+            <circle cx="200" cy="185" r="4" fill="#f87171"/>
+            <circle cx="270" cy="195" r="4" fill="#f87171"/>
+            <circle cx="340" cy="199" r="4" fill="#f87171"/>
+
+            <!-- Legend -->
+            <g font-size="10" font-family="Inter">
+              <rect x="50" y="30" width="14" height="3" fill="#34d399"/>
+              <text x="70" y="34" fill="#e7e9ee">Healthy (Xiaohongshu)</text>
+              <rect x="50" y="46" width="14" height="3" fill="#7c5cff"/>
+              <text x="70" y="50" fill="#e7e9ee">Wandr target Y2</text>
+              <rect x="220" y="30" width="14" height="3" fill="#f87171"/>
+              <text x="240" y="34" fill="#e7e9ee">Leaky (BeReal)</text>
+            </g>
+          </svg>
+          <div class="text-xs text-gray-500 text-center mt-2">Retention curve so sánh · simulated</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 mt-8">
+      <div class="gradient-border p-6 reveal">
+        <div class="text-xs text-gray-500 mb-2">KILL CRITERIA</div>
+        <div class="text-sm">Nếu D30 &lt;15% sau 2 city seeded → pivot/dừng.</div>
+      </div>
+      <div class="gradient-border p-6 reveal" style="border-color: rgba(124,92,255,0.3);">
+        <div class="text-xs text-gray-500 mb-2">MAGIC NUMBER</div>
+        <div class="text-sm">W1 làm ≥3: post + follow 5+ + save 3+ + nhận engagement + mở 4 ngày.</div>
+      </div>
+      <div class="gradient-border p-6 reveal">
+        <div class="text-xs text-gray-500 mb-2">CEILING</div>
+        <div class="text-sm">Xiaohongshu: D30 42%, M6 35%. Wandr target 70-80% mức đó năm 3.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap" class="py-32 relative">
+  <div class="glow glow-1" style="left: 50%; top: 50%;"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+      <div class="section-eyebrow">Roadmap</div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">City-first. <span class="gradient-text">Đà Lạt</span> trước.</h2>
+      <p class="text-gray-400 text-lg">Không launch quốc gia. Build mật độ city → expand theo flow tourist.</p>
+    </div>
+
+    <div class="max-w-4xl mx-auto space-y-12">
+      <!-- PHASE 1 EXPANDED -->
+      <div class="roadmap-item reveal">
+        <div class="text-sm text-purple-400 font-semibold mb-2">PHASE 1 · M0-M3 · ĐÀ LẠT</div>
+        <h3 class="text-2xl font-bold mb-3">Core loop · Closed beta</h3>
+        <p class="text-gray-400 mb-5">Build mọi thứ tối thiểu để vòng check-in hoạt động end-to-end. Không UX nâng cao, không AI, không monetize.</p>
+
+        <div class="grid md:grid-cols-2 gap-4 mb-5">
+          <div class="p-5 rounded-2xl" style="background: rgba(124,92,255,0.06); border: 1px solid rgba(124,92,255,0.2);">
+            <div class="text-xs text-purple-300 font-semibold mb-2 uppercase tracking-wider">Tháng 1 · Foundation</div>
+            <ul class="text-sm text-gray-300 space-y-1.5">
+              <li>• Setup infra (NestJS + Postgres/PostGIS + Redis)</li>
+              <li>• Auth OTP phone + Google OAuth</li>
+              <li>• Camera in-app + GPS capture + anti-spoof v0</li>
+              <li>• Import Google Places API 5k POI Đà Lạt</li>
+            </ul>
+          </div>
+          <div class="p-5 rounded-2xl" style="background: rgba(124,92,255,0.06); border: 1px solid rgba(124,92,255,0.2);">
+            <div class="text-xs text-purple-300 font-semibold mb-2 uppercase tracking-wider">Tháng 2 · Core UX</div>
+            <ul class="text-sm text-gray-300 space-y-1.5">
+              <li>• Map feed Mapbox + clustering</li>
+              <li>• Post detail + place detail screen</li>
+              <li>• Like, comment, follow, profile</li>
+              <li>• 1 saved collection mặc định</li>
+            </ul>
+          </div>
+          <div class="p-5 rounded-2xl" style="background: rgba(124,92,255,0.06); border: 1px solid rgba(124,92,255,0.2);">
+            <div class="text-xs text-purple-300 font-semibold mb-2 uppercase tracking-wider">Tháng 3 · Seeding + beta</div>
+            <ul class="text-sm text-gray-300 space-y-1.5">
+              <li>• Push notif (like/comment/follow)</li>
+              <li>• Onboard 30-50 micro-creator Đà Lạt</li>
+              <li>• Backfill scraped IG geotag → invite claim</li>
+              <li>• Closed beta TestFlight + Play internal</li>
+            </ul>
+          </div>
+          <div class="p-5 rounded-2xl" style="background: rgba(124,92,255,0.06); border: 1px solid rgba(124,92,255,0.2);">
+            <div class="text-xs text-purple-300 font-semibold mb-2 uppercase tracking-wider">Budget breakdown</div>
+            <ul class="text-sm text-gray-300 space-y-1.5">
+              <li>• 3 dev × 3 tháng: <strong>$36k</strong></li>
+              <li>• Infra (R2, Mapbox, R2): <strong>$3k</strong></li>
+              <li>• Creator seed (50 × $200): <strong>$10k</strong></li>
+              <li>• Tooling + ops buffer: <strong>$6k</strong></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-2xl mb-3" style="background: rgba(34,211,238,0.06); border: 1px solid rgba(34,211,238,0.25);">
+          <div class="text-xs text-cyan-300 font-semibold mb-2 uppercase tracking-wider">🎯 Exit criteria Phase 1</div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+            <div><div class="text-gray-400 text-xs">Posts</div><div class="font-bold text-white">≥5,000</div></div>
+            <div><div class="text-gray-400 text-xs">DAU</div><div class="font-bold text-white">≥500</div></div>
+            <div><div class="text-gray-400 text-xs">D7 retention</div><div class="font-bold text-white">≥22%</div></div>
+            <div><div class="text-gray-400 text-xs">Creator active</div><div class="font-bold text-white">≥30</div></div>
+          </div>
+        </div>
+
+        <div class="text-xs text-gray-500">⚠️ Nếu sau M3 không đạt D7 ≥18% → fix onboarding + camera UX trước khi vào Phase 2.</div>
+      </div>
+
+      <!-- PHASE 2 EXPANDED -->
+      <div class="roadmap-item reveal">
+        <div class="text-sm text-cyan-400 font-semibold mb-2">PHASE 2 · M4-M6 · ĐÀ LẠT MATURE + HCM SOFT LAUNCH</div>
+        <h3 class="text-2xl font-bold mb-3">Engagement, trust + city #2</h3>
+        <p class="text-gray-400 mb-5">Public launch Đà Lạt. Seeding HCM (3 quận pilot). Lớp engagement deep + trust system + AI cơ bản.</p>
+
+        <div class="grid md:grid-cols-2 gap-4 mb-5">
+          <div class="p-5 rounded-2xl" style="background: rgba(34,211,238,0.06); border: 1px solid rgba(34,211,238,0.2);">
+            <div class="text-xs text-cyan-300 font-semibold mb-2 uppercase tracking-wider">Tháng 4 · Trust + AI v1</div>
+            <ul class="text-sm text-gray-300 space-y-1.5">
+              <li>• Trust score v1 (behavioral signal)</li>
+              <li>• Badge verified visit hiển thị trên pin</li>
+              <li>• AI auto-tag ảnh (CLIP + YOLO categories)</li>
+              <li>• Public launch Đà Lạt + PR local</li>
+            </ul>
+          </div>
+          <div class="p-5 rounded-2xl" style="background: rgba(34,211,238,0.06); border: 1px solid rgba(34,211,238,0.2);">
+            <div class="text-xs text-cyan-300 font-semibold mb-2 uppercase tracking-wider">Tháng 5 · Engagement deep</div>
+            <ul class="text-sm text-gray-300 space-y-1.5">
+              <li>• Vibe search (text → CLIP embedding)</li>
+              <li>• Gamification: level + 10 badge + city counter</li>
+              <li>• Trip timeline auto-stitch theo ngày</li>
+              <li>• Multi-collection + share collection</li>
+            </ul>
+          </div>
+          <div class="p-5 rounded-2xl" style="background: rgba(34,211,238,0.06); border: 1px solid rgba(34,211,238,0.2);">
+            <div class="text-xs text-cyan-300 font-semibold mb-2 uppercase tracking-wider">Tháng 6 · HCM expansion</div>
+            <ul class="text-sm text-gray-300 space-y-1.5">
+              <li>• Seed HCM (Q1, Q3, Thảo Điền): 30 creator</li>
+              <li>• Heatmap mode + Recent (24h)</li>
+              <li>• Hidden gem algo v1 (save_rate scoring)</li>
+              <li>• Trip recap auto-video export IG/TikTok</li>
+            </ul>
+          </div>
+          <div class="p-5 rounded-2xl" style="background: rgba(34,211,238,0.06); border: 1px solid rgba(34,211,238,0.2);">
+            <div class="text-xs text-cyan-300 font-semibold mb-2 uppercase tracking-wider">Budget breakdown</div>
+            <ul class="text-sm text-gray-300 space-y-1.5">
+              <li>• 4 dev × 3 tháng: <strong>$54k</strong></li>
+              <li>• Infra scale (Redis + ML): <strong>$8k</strong></li>
+              <li>• HCM creator seed (30 × $250): <strong>$7.5k</strong></li>
+              <li>• Paid ads TikTok/IG test: <strong>$15k</strong></li>
+              <li>• PR + community: <strong>$6k</strong></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-2xl mb-3" style="background: rgba(244,114,182,0.06); border: 1px solid rgba(244,114,182,0.25);">
+          <div class="text-xs text-pink-300 font-semibold mb-2 uppercase tracking-wider">🎯 Exit criteria Phase 2 (M6)</div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+            <div><div class="text-gray-400 text-xs">MAU</div><div class="font-bold text-white">≥50k</div></div>
+            <div><div class="text-gray-400 text-xs">D30 retention</div><div class="font-bold text-white">≥17%</div></div>
+            <div><div class="text-gray-400 text-xs">Posts/MAU/tháng</div><div class="font-bold text-white">≥2.5</div></div>
+            <div><div class="text-gray-400 text-xs">Cities ≥5k post</div><div class="font-bold text-white">2</div></div>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl mb-3" style="background: rgba(124,92,255,0.05); border: 1px dashed rgba(124,92,255,0.3);">
+          <div class="text-xs text-purple-300 font-semibold mb-2">💡 Tại sao HCM thứ 2, không phải Hà Nội?</div>
+          <div class="text-sm text-gray-400">HCM có flow tourist Đà Lạt mạnh hơn — user Đà Lạt đã active sẽ trigger growth tự nhiên ở HCM. Hà Nội có dynamic khác, để Phase 3.</div>
+        </div>
+
+        <div class="text-xs text-gray-500">⚠️ Kill criteria: nếu D30 &lt;13% sau 2 city seed → pivot use case hoặc dừng.</div>
+      </div>
+      <div class="roadmap-item reveal">
+        <div class="text-sm text-pink-400 font-semibold mb-2">PHASE 3 · M7-M12 · MONETIZE</div>
+        <h3 class="text-2xl font-bold mb-3">Scale + revenue</h3>
+        <p class="text-gray-400 mb-3">Sponsored pin (place trả boost), affiliate Klook/Booking deep-link, premium $3-5/tháng, creator revenue share, web app SEO.</p>
+        <div class="text-xs text-gray-500">Target: 200k MAU, $50k MRR, ready Series A.</div>
+      </div>
+      <div class="roadmap-item reveal">
+        <div class="text-sm text-emerald-400 font-semibold mb-2">PHASE 4 · NĂM 2-3 · SEA</div>
+        <h3 class="text-2xl font-bold mb-3">Khu vực hóa</h3>
+        <p class="text-gray-400 mb-3">Bangkok, Bali, Manila, KL. AI travel agent ("plan 4 ngày Bali từ post tôi saved"). B2B place ads self-serve.</p>
+        <div class="text-xs text-gray-500">Target: 1-2M MAU, $2M+ ARR.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RISKS -->
+<section class="py-32 relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+      <div class="section-eyebrow">Rủi Ro</div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">Minh bạch: <span class="gradient-text">5 rủi ro lớn</span> và cách giảm.</h2>
+    </div>
+
+    <div class="space-y-3 max-w-4xl mx-auto">
+      <details class="gradient-border px-6 reveal">
+        <summary><span class="font-semibold">Cold start map trống <span class="text-red-400 text-sm ml-2">90% likelihood</span></span></summary>
+        <p class="text-gray-400 text-sm pb-5">User mở map không thấy gì → uninstall ngay. <strong class="text-white">Mitigation</strong>: city-first tuyệt đối. Seed 5k post Đà Lạt + backfill scraped IG geotag + paid creator lockup 90 ngày trước public launch.</p>
+      </details>
+      <details class="gradient-border px-6 reveal">
+        <summary><span class="font-semibold">Camera UX chậm <span class="text-yellow-400 text-sm ml-2">60% likelihood</span></span></summary>
+        <p class="text-gray-400 text-sm pb-5">GPS lock + upload chậm → user bỏ giữa flow. <strong class="text-white">Mitigation</strong>: upload background, GPS lock lazy, optimistic post, target &lt;15s từ shutter → posted.</p>
+      </details>
+      <details class="gradient-border px-6 reveal">
+        <summary><span class="font-semibold">Spam + fake GPS <span class="text-red-400 text-sm ml-2">70% likelihood</span></span></summary>
+        <p class="text-gray-400 text-sm pb-5">Bot tạo account, fake check-in, sponsored trá hình. <strong class="text-white">Mitigation</strong>: detect mock provider Android, sensor cross-check iOS, server-side sanity tốc độ giữa post, trust score gating, NSFW auto.</p>
+      </details>
+      <details class="gradient-border px-6 reveal">
+        <summary><span class="font-semibold">Creator burnout <span class="text-yellow-400 text-sm ml-2">50% likelihood</span></span></summary>
+        <p class="text-gray-400 text-sm pb-5">Tier 1 creator không kiếm tiền → bỏ. <strong class="text-white">Mitigation</strong>: launch creator monetization tháng 6, revenue share 70/30, sponsored pin bookings tự động.</p>
+      </details>
+      <details class="gradient-border px-6 reveal">
+        <summary><span class="font-semibold">Big tech clone <span class="text-yellow-400 text-sm ml-2">40% likelihood</span></span></summary>
+        <p class="text-gray-400 text-sm pb-5">Google Maps, Snap, ByteDance vào sau. <strong class="text-white">Mitigation</strong>: niche du lịch + trust score (moat behavioral), lock creator graph qua revenue share, vibe embedding dataset độc quyền.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- UI MOCKUPS -->
+<section id="screens" class="py-32 relative">
+  <div class="glow glow-2" style="top: 30%; left: 10%;"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+      <div class="section-eyebrow">Sản Phẩm</div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">5 màn hình <span class="gradient-text">cốt lõi</span> của app.</h2>
+      <p class="text-gray-400 text-lg">Map là home tab. Camera là FAB cố định. Mọi flow ≤3 tap.</p>
+    </div>
+
+    <div class="phones-row">
+
+      <!-- 1. MAP SCREEN -->
+      <div class="reveal">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="map-bg"></div>
+            <div class="map-grid"></div>
+            <div class="status-bar relative" style="z-index: 10;">
+              <span>9:41</span>
+              <span>● ● ●</span>
+            </div>
+            <div class="search-overlay">
+              <div class="search-pill">
+                <span>🔍</span>
+                <span>Tìm quán, hidden gem...</span>
+              </div>
+              <div class="filter-row">
+                <span class="filter-chip active">Tất cả</span>
+                <span class="filter-chip">Café</span>
+                <span class="filter-chip">Food</span>
+                <span class="filter-chip">View</span>
+              </div>
+            </div>
+            <div class="phone-content">
+              <div class="mini-pin" style="top: 35%; left: 25%;"></div>
+              <div class="mini-pin" style="top: 50%; left: 55%;"></div>
+              <div class="mini-pin cluster" style="top: 42%; left: 40%;">12</div>
+              <div class="mini-pin" style="top: 65%; left: 30%;"></div>
+              <div class="mini-pin" style="top: 60%; left: 70%;"></div>
+              <div class="mini-pin" style="top: 75%; left: 50%;"></div>
+              <div class="post-card-mini">
+                <div class="post-thumb"></div>
+                <div style="font-size: 10px;">
+                  <div style="font-weight: 600;">Cộng Cà Phê</div>
+                  <div style="color: rgba(255,255,255,0.5); margin: 2px 0;">📍 230m · Đà Lạt</div>
+                  <div style="color: #34d399; font-size: 9px;">● 3 người check-in hôm nay</div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-bar">
+              <span class="tab active">🗺️</span>
+              <span class="tab">🔍</span>
+              <span class="tab">📷</span>
+              <span class="tab">💾</span>
+              <span class="tab">👤</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-sm text-gray-400">Map Feed · Home</div>
+      </div>
+
+      <!-- 2. CAMERA SCREEN -->
+      <div class="reveal">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="camera-viewfinder"></div>
+            <div class="status-bar relative" style="z-index: 10;">
+              <span>9:41</span>
+              <span>● ● ●</span>
+            </div>
+            <div class="gps-chip">
+              <span class="gps-dot"></span>
+              <span>GPS xác thực · Cộng Cà Phê</span>
+            </div>
+            <div class="phone-content">
+              <div style="position: absolute; inset: 60px 30px 200px; border: 2px solid rgba(255,255,255,0.2); border-radius: 16px;"></div>
+              <div class="camera-hint">Chụp ngay để verify · không upload từ thư viện</div>
+              <div class="shutter"></div>
+              <div style="position: absolute; bottom: 100px; left: 30px; width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 16px;">🔄</div>
+              <div style="position: absolute; bottom: 100px; right: 30px; width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 16px;">⚡</div>
+            </div>
+            <div class="tab-bar">
+              <span class="tab">🗺️</span>
+              <span class="tab">🔍</span>
+              <span class="tab active">📷</span>
+              <span class="tab">💾</span>
+              <span class="tab">👤</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-sm text-gray-400">Camera · Verified Capture</div>
+      </div>
+
+      <!-- 3. FEED/POST DETAIL -->
+      <div class="reveal">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="status-bar relative" style="z-index: 10;">
+              <span>9:41</span>
+              <span>● ● ●</span>
+            </div>
+            <div class="phone-content" style="overflow-y: auto;">
+              <div class="feed-header">
+                <div class="avatar"></div>
+                <div style="flex: 1;">
+                  <div style="font-size: 12px; font-weight: 600;">linh_dl</div>
+                  <div style="font-size: 9px; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 4px;">📍 Cộng Cà Phê · 2p <span class="badge-verified">✓ Verified</span></div>
+                </div>
+                <span style="font-size: 14px;">⋯</span>
+              </div>
+              <div class="feed-photo"></div>
+              <div class="feed-actions">
+                <span>❤️</span><span>💬</span><span>📤</span><span>🔖</span>
+              </div>
+              <div class="feed-caption">
+                <strong>248 likes</strong><br/>
+                <strong>linh_dl</strong> View phố cực xinh, ít người buổi chiều ☕<br/>
+                <span class="place">📍 Cộng Cà Phê Tú Xương · Đà Lạt</span>
+              </div>
+            </div>
+            <div class="tab-bar">
+              <span class="tab active">🗺️</span>
+              <span class="tab">🔍</span>
+              <span class="tab">📷</span>
+              <span class="tab">💾</span>
+              <span class="tab">👤</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-sm text-gray-400">Post Detail · Social</div>
+      </div>
+
+      <!-- 4. PLACE DETAIL -->
+      <div class="reveal">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="status-bar relative" style="z-index: 10;">
+              <span>9:41</span>
+              <span>● ● ●</span>
+            </div>
+            <div class="phone-content" style="overflow-y: auto;">
+              <div class="place-hero"></div>
+              <div class="place-info">
+                <div class="place-title">Cộng Cà Phê Tú Xương</div>
+                <div class="place-meta">
+                  <span>☕ Café</span>·<span>📍 Đà Lạt</span>
+                  <span class="badge-verified">✓ Verified Place</span>
+                </div>
+              </div>
+              <div class="place-stats">
+                <div class="place-stat-box">
+                  <div class="v">4.8</div>
+                  <div class="l">Rating</div>
+                </div>
+                <div class="place-stat-box">
+                  <div class="v">312</div>
+                  <div class="l">Check-in</div>
+                </div>
+                <div class="place-stat-box">
+                  <div class="v">💎</div>
+                  <div class="l">Hidden gem</div>
+                </div>
+              </div>
+              <div style="padding: 10px 14px 4px; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7);">Recent visits</div>
+              <div class="place-reviews">
+                <div class="review-mini">
+                  <div class="av"></div>
+                  <div class="txt">"View phố cực xinh, ít người buổi chiều" — linh_dl · 2p</div>
+                </div>
+                <div class="review-mini">
+                  <div class="av" style="background: linear-gradient(135deg, #f472b6, #fbbf24);"></div>
+                  <div class="txt">"Cà phê dừa ngon, wifi mạnh, ngồi work cả ngày" — minh.k · 1h</div>
+                </div>
+                <div class="review-mini">
+                  <div class="av" style="background: linear-gradient(135deg, #34d399, #22d3ee);"></div>
+                  <div class="txt">"Hidden gem thật. Tầng 2 view đẹp nhất" — duc.travel · 3h</div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-bar">
+              <span class="tab active">🗺️</span>
+              <span class="tab">🔍</span>
+              <span class="tab">📷</span>
+              <span class="tab">💾</span>
+              <span class="tab">👤</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-sm text-gray-400">Place Detail · Discovery</div>
+      </div>
+
+      <!-- 5. PROFILE -->
+      <div class="reveal">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="status-bar relative" style="z-index: 10;">
+              <span>9:41</span>
+              <span>● ● ●</span>
+            </div>
+            <div class="phone-content" style="overflow-y: auto;">
+              <div class="profile-header">
+                <div class="profile-avatar"></div>
+                <div style="font-size: 13px; font-weight: 700;">linh_dl</div>
+                <div style="font-size: 10px; color: #c4b5fd; margin-top: 2px;">🎖️ Explorer Lv 12 · Đà Lạt Master</div>
+                <div style="font-size: 9px; color: rgba(255,255,255,0.5); margin-top: 6px;">"Café hunter · Hidden gem chaser ☕"</div>
+              </div>
+              <div class="profile-stats">
+                <div><span class="num">87</span>Posts</div>
+                <div><span class="num">42</span>Places</div>
+                <div><span class="num">1.2k</span>Followers</div>
+                <div><span class="num">5</span>Cities</div>
+              </div>
+              <div style="padding: 10px 14px 4px; display: flex; gap: 6px; overflow: hidden;">
+                <span class="filter-chip active">📍 Posts</span>
+                <span class="filter-chip">💾 Saved</span>
+                <span class="filter-chip">🗺️ Trips</span>
+              </div>
+              <div class="grid-3">
+                <div class="grid-cell g1"></div>
+                <div class="grid-cell g2"></div>
+                <div class="grid-cell g3"></div>
+                <div class="grid-cell g4"></div>
+                <div class="grid-cell g5"></div>
+                <div class="grid-cell g6"></div>
+                <div class="grid-cell g2"></div>
+                <div class="grid-cell g3"></div>
+                <div class="grid-cell g1"></div>
+              </div>
+            </div>
+            <div class="tab-bar">
+              <span class="tab">🗺️</span>
+              <span class="tab">🔍</span>
+              <span class="tab">📷</span>
+              <span class="tab">💾</span>
+              <span class="tab active">👤</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-sm text-gray-400">Profile · Gamification</div>
+      </div>
+
+    </div>
+
+    <div class="text-center mt-8 text-xs text-gray-500">← Vuốt ngang để xem các màn hình →</div>
+
+    <!-- TAB SCREENS -->
+    <div class="text-center max-w-3xl mx-auto mt-32 mb-12 reveal">
+      <div class="section-eyebrow">Tab Navigation</div>
+      <h3 class="text-3xl md:text-4xl font-bold mb-4">5 tab home: <span class="gradient-text">Map · Search · Camera · Saved · Profile</span></h3>
+      <p class="text-gray-400">Mỗi tab có flow riêng. Camera FAB luôn nổi giữa.</p>
+    </div>
+
+    <div class="phones-row">
+
+      <!-- TAB: SEARCH/DISCOVER -->
+      <div class="reveal">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="status-bar relative" style="z-index: 10;">
+              <span>9:41</span>
+              <span>● ● ●</span>
+            </div>
+            <div class="phone-content" style="overflow-y: auto;">
+              <div style="padding: 14px;">
+                <div class="search-pill" style="position: relative; top: 0;">
+                  <span>🔍</span>
+                  <span style="color: #fff;">chill sunset cafe</span>
+                </div>
+                <div style="font-size: 9px; color: rgba(255,255,255,0.4); margin-top: 6px;">✨ AI Vibe Search · 24 kết quả</div>
+              </div>
+              <div style="padding: 0 14px 10px; display: flex; gap: 6px; flex-wrap: wrap;">
+                <span class="filter-chip active">chill</span>
+                <span class="filter-chip">aesthetic</span>
+                <span class="filter-chip">hidden gem</span>
+                <span class="filter-chip">local</span>
+              </div>
+              <div style="padding: 0 10px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 8px; display: flex; gap: 8px;">
+                  <div style="width: 56px; height: 56px; border-radius: 10px; background: linear-gradient(135deg, #fbbf24, #f472b6); flex-shrink: 0;"></div>
+                  <div style="font-size: 10px;">
+                    <div style="font-weight: 600;">Mây Lang Thang Café</div>
+                    <div style="color: rgba(255,255,255,0.5);">📍 1.2km · Đà Lạt</div>
+                    <div style="color: #c4b5fd; font-size: 9px; margin-top: 2px;">💎 Hidden gem · 4.9★</div>
+                  </div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 8px; display: flex; gap: 8px;">
+                  <div style="width: 56px; height: 56px; border-radius: 10px; background: linear-gradient(135deg, #f472b6, #7c5cff); flex-shrink: 0;"></div>
+                  <div style="font-size: 10px;">
+                    <div style="font-weight: 600;">An Café Đà Lạt</div>
+                    <div style="color: rgba(255,255,255,0.5);">📍 800m · Đà Lạt</div>
+                    <div style="color: #34d399; font-size: 9px; margin-top: 2px;">● 8 check-in hôm nay</div>
+                  </div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 8px; display: flex; gap: 8px;">
+                  <div style="width: 56px; height: 56px; border-radius: 10px; background: linear-gradient(135deg, #22d3ee, #7c5cff); flex-shrink: 0;"></div>
+                  <div style="font-size: 10px;">
+                    <div style="font-weight: 600;">Tiệm Cà Phê 1985</div>
+                    <div style="color: rgba(255,255,255,0.5);">📍 2.1km · Đà Lạt</div>
+                    <div style="color: #fbbf24; font-size: 9px; margin-top: 2px;">🔥 Trending tuần này</div>
+                  </div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 8px; display: flex; gap: 8px;">
+                  <div style="width: 56px; height: 56px; border-radius: 10px; background: linear-gradient(135deg, #34d399, #22d3ee); flex-shrink: 0;"></div>
+                  <div style="font-size: 10px;">
+                    <div style="font-weight: 600;">Cheese Coffee Tự Phước</div>
+                    <div style="color: rgba(255,255,255,0.5);">📍 3.4km · Đà Lạt</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 9px; margin-top: 2px;">4.7★ · 142 check-in</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-bar">
+              <span class="tab">🗺️</span>
+              <span class="tab active">🔍</span>
+              <span class="tab">📷</span>
+              <span class="tab">💾</span>
+              <span class="tab">👤</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-sm text-gray-400">🔍 Search · AI Vibe</div>
+      </div>
+
+      <!-- TAB: SAVED/COLLECTIONS -->
+      <div class="reveal">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="status-bar relative" style="z-index: 10;">
+              <span>9:41</span>
+              <span>● ● ●</span>
+            </div>
+            <div class="phone-content" style="overflow-y: auto;">
+              <div style="padding: 14px 14px 8px;">
+                <div style="font-size: 16px; font-weight: 700;">Saved</div>
+                <div style="font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 2px;">8 collections · 142 places</div>
+              </div>
+              <div style="padding: 0 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div style="border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.03);">
+                  <div style="aspect-ratio: 1; background: linear-gradient(135deg, #fbbf24, #f472b6); position: relative;">
+                    <div style="position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 8px; font-size: 8px;">24</div>
+                  </div>
+                  <div style="padding: 6px 8px;">
+                    <div style="font-size: 10px; font-weight: 600;">Đà Lạt T7</div>
+                    <div style="font-size: 8px; color: rgba(255,255,255,0.5);">Café tour</div>
+                  </div>
+                </div>
+                <div style="border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.03);">
+                  <div style="aspect-ratio: 1; background: linear-gradient(135deg, #22d3ee, #7c5cff); position: relative;">
+                    <div style="position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 8px; font-size: 8px;">18</div>
+                  </div>
+                  <div style="padding: 6px 8px;">
+                    <div style="font-size: 10px; font-weight: 600;">Hidden Gems</div>
+                    <div style="font-size: 8px; color: rgba(255,255,255,0.5);">All cities</div>
+                  </div>
+                </div>
+                <div style="border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.03);">
+                  <div style="aspect-ratio: 1; background: linear-gradient(135deg, #f472b6, #7c5cff); position: relative;">
+                    <div style="position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 8px; font-size: 8px;">12</div>
+                  </div>
+                  <div style="padding: 6px 8px;">
+                    <div style="font-size: 10px; font-weight: 600;">Hội An trip</div>
+                    <div style="font-size: 8px; color: rgba(255,255,255,0.5);">Tháng 6</div>
+                  </div>
+                </div>
+                <div style="border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.03);">
+                  <div style="aspect-ratio: 1; background: linear-gradient(135deg, #34d399, #22d3ee); position: relative;">
+                    <div style="position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 8px; font-size: 8px;">9</div>
+                  </div>
+                  <div style="padding: 6px 8px;">
+                    <div style="font-size: 10px; font-weight: 600;">Sunset spots</div>
+                    <div style="font-size: 8px; color: rgba(255,255,255,0.5);">Hoàng hôn</div>
+                  </div>
+                </div>
+                <div style="border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.03);">
+                  <div style="aspect-ratio: 1; background: linear-gradient(135deg, #7c5cff, #f472b6); position: relative;">
+                    <div style="position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 8px; font-size: 8px;">31</div>
+                  </div>
+                  <div style="padding: 6px 8px;">
+                    <div style="font-size: 10px; font-weight: 600;">Food HCM</div>
+                    <div style="font-size: 8px; color: rgba(255,255,255,0.5);">Quận 1,3</div>
+                  </div>
+                </div>
+                <div style="border-radius: 12px; aspect-ratio: 1; border: 2px dashed rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; flex-direction: column; color: rgba(255,255,255,0.4); font-size: 10px;">
+                  <div style="font-size: 20px;">+</div>
+                  <div>New</div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-bar">
+              <span class="tab">🗺️</span>
+              <span class="tab">🔍</span>
+              <span class="tab">📷</span>
+              <span class="tab active">💾</span>
+              <span class="tab">👤</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-sm text-gray-400">💾 Saved · Collections</div>
+      </div>
+
+      <!-- HOME FEED (alternative home tab view) -->
+      <div class="reveal">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="status-bar relative" style="z-index: 10;">
+              <span>9:41</span>
+              <span>● ● ●</span>
+            </div>
+            <div class="phone-content" style="overflow-y: auto;">
+              <div style="padding: 14px 14px 6px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-size: 16px; font-weight: 700;">Khám phá</div>
+                <div style="display: flex; gap: 10px; font-size: 14px;">🔔 ✉️</div>
+              </div>
+              <div style="padding: 0 14px 10px; display: flex; gap: 6px;">
+                <span class="filter-chip active">Gần tôi</span>
+                <span class="filter-chip">Following</span>
+                <span class="filter-chip">Trending</span>
+              </div>
+              <div style="padding: 0 10px; display: flex; flex-direction: column; gap: 10px;">
+                <div style="border-radius: 14px; overflow: hidden; background: rgba(255,255,255,0.03);">
+                  <div style="padding: 8px 10px; display: flex; align-items: center; gap: 8px;">
+                    <div class="avatar" style="width: 24px; height: 24px;"></div>
+                    <div style="flex: 1;">
+                      <div style="font-size: 10px; font-weight: 600;">khoa.travel</div>
+                      <div style="font-size: 8px; color: rgba(255,255,255,0.5);">📍 Hồ Tuyền Lâm · 5 phút</div>
+                    </div>
+                    <span class="badge-verified">✓</span>
+                  </div>
+                  <div style="height: 130px; background: linear-gradient(135deg, #fbbf24, #f472b6, #7c5cff);"></div>
+                  <div style="padding: 6px 10px 8px; font-size: 9px; display: flex; gap: 10px;">
+                    <span>❤️ 412</span><span>💬 28</span><span>🔖 89</span>
+                  </div>
+                </div>
+                <div style="border-radius: 14px; overflow: hidden; background: rgba(255,255,255,0.03);">
+                  <div style="padding: 8px 10px; display: flex; align-items: center; gap: 8px;">
+                    <div class="avatar" style="width: 24px; height: 24px; background: linear-gradient(135deg, #34d399, #22d3ee);"></div>
+                    <div style="flex: 1;">
+                      <div style="font-size: 10px; font-weight: 600;">minh.k</div>
+                      <div style="font-size: 8px; color: rgba(255,255,255,0.5);">📍 Cộng Cà Phê · 12 phút</div>
+                    </div>
+                    <span class="badge-verified">✓</span>
+                  </div>
+                  <div style="height: 130px; background: linear-gradient(135deg, #22d3ee, #7c5cff);"></div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-bar">
+              <span class="tab active">🗺️</span>
+              <span class="tab">🔍</span>
+              <span class="tab">📷</span>
+              <span class="tab">💾</span>
+              <span class="tab">👤</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-sm text-gray-400">🗺️ Home Feed · List view</div>
+      </div>
+
+      <!-- TRIP TIMELINE -->
+      <div class="reveal">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="status-bar relative" style="z-index: 10;">
+              <span>9:41</span>
+              <span>● ● ●</span>
+            </div>
+            <div class="phone-content" style="overflow-y: auto;">
+              <div style="padding: 14px;">
+                <div style="font-size: 16px; font-weight: 700;">Đà Lạt Trip</div>
+                <div style="font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 2px;">22-25.05.2026 · 4 ngày · 18 places</div>
+                <div style="margin-top: 10px; height: 100px; background: linear-gradient(135deg, #0d1020, #1a0d2e); border-radius: 12px; position: relative; overflow: hidden;">
+                  <div class="map-grid"></div>
+                  <svg style="position: absolute; inset: 0; width: 100%; height: 100%;" viewBox="0 0 200 100" preserveAspectRatio="none">
+                    <path d="M 20 80 Q 50 30 80 50 T 140 40 T 180 60" stroke="url(#routeGrad)" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+                    <defs>
+                      <linearGradient id="routeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#7c5cff"/>
+                        <stop offset="100%" stop-color="#22d3ee"/>
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <div class="mini-pin" style="top: 60%; left: 8%; width: 14px; height: 14px;"></div>
+                  <div class="mini-pin" style="top: 40%; left: 38%; width: 14px; height: 14px;"></div>
+                  <div class="mini-pin" style="top: 35%; left: 65%; width: 14px; height: 14px;"></div>
+                  <div class="mini-pin" style="top: 55%; left: 88%; width: 14px; height: 14px;"></div>
+                </div>
+              </div>
+              <div style="padding: 0 14px;">
+                <div style="font-size: 11px; font-weight: 600; color: #c4b5fd; margin-bottom: 8px;">📅 Ngày 1 · 22.05</div>
+                <div class="roadmap-item" style="padding-left: 22px; padding-bottom: 12px;">
+                  <div style="font-size: 10px; font-weight: 600;">Cộng Cà Phê</div>
+                  <div style="font-size: 9px; color: rgba(255,255,255,0.5);">10:42 · ☕ Café</div>
+                </div>
+                <div class="roadmap-item" style="padding-left: 22px; padding-bottom: 12px;">
+                  <div style="font-size: 10px; font-weight: 600;">Hồ Xuân Hương</div>
+                  <div style="font-size: 9px; color: rgba(255,255,255,0.5);">14:15 · 🌊 View</div>
+                </div>
+                <div class="roadmap-item" style="padding-left: 22px;">
+                  <div style="font-size: 10px; font-weight: 600;">Quán Cô Ba</div>
+                  <div style="font-size: 9px; color: rgba(255,255,255,0.5);">19:30 · 🍜 Food</div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-bar">
+              <span class="tab">🗺️</span>
+              <span class="tab">🔍</span>
+              <span class="tab">📷</span>
+              <span class="tab">💾</span>
+              <span class="tab active">👤</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-sm text-gray-400">🗺️ Trip Timeline</div>
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <div class="reveal">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="status-bar relative" style="z-index: 10;">
+              <span>9:41</span>
+              <span>● ● ●</span>
+            </div>
+            <div class="phone-content" style="overflow-y: auto;">
+              <div style="padding: 14px;">
+                <div style="font-size: 16px; font-weight: 700;">Activity</div>
+              </div>
+              <div style="padding: 0 14px 6px; font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 600;">HÔM NAY</div>
+              <div style="padding: 0 10px; display: flex; flex-direction: column; gap: 6px;">
+                <div style="background: rgba(124,92,255,0.08); border-radius: 10px; padding: 10px; display: flex; gap: 8px; align-items: center;">
+                  <div style="font-size: 20px;">🎖️</div>
+                  <div style="flex: 1; font-size: 10px;">
+                    <strong style="color: #c4b5fd;">Unlock badge: Đà Lạt Master!</strong>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 9px; margin-top: 2px;">Check-in 50 places ở Đà Lạt</div>
+                  </div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px; display: flex; gap: 8px; align-items: center;">
+                  <div class="avatar" style="width: 30px; height: 30px;"></div>
+                  <div style="flex: 1; font-size: 10px;">
+                    <strong>khoa.travel</strong> đã thích bài của bạn
+                    <div style="color: rgba(255,255,255,0.5); font-size: 9px; margin-top: 2px;">2 phút trước</div>
+                  </div>
+                  <div style="width: 30px; height: 30px; border-radius: 6px; background: linear-gradient(135deg, #f472b6, #7c5cff);"></div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px; display: flex; gap: 8px; align-items: center;">
+                  <div class="avatar" style="width: 30px; height: 30px; background: linear-gradient(135deg, #34d399, #22d3ee);"></div>
+                  <div style="flex: 1; font-size: 10px;">
+                    <strong>minh.k</strong> đã follow bạn
+                    <div style="color: rgba(255,255,255,0.5); font-size: 9px; margin-top: 2px;">15 phút</div>
+                  </div>
+                  <div class="filter-chip active" style="padding: 3px 10px;">Follow</div>
+                </div>
+                <div style="background: rgba(34,211,238,0.06); border-radius: 10px; padding: 10px; display: flex; gap: 8px; align-items: center;">
+                  <div style="font-size: 20px;">📍</div>
+                  <div style="flex: 1; font-size: 10px;">
+                    <strong style="color: #22d3ee;">5 quán mới gần bạn</strong>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 9px; margin-top: 2px;">Vừa được check-in trong 2km</div>
+                  </div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px; display: flex; gap: 8px; align-items: center;">
+                  <div class="avatar" style="width: 30px; height: 30px; background: linear-gradient(135deg, #fbbf24, #f472b6);"></div>
+                  <div style="flex: 1; font-size: 10px;">
+                    <strong>linh_dl</strong>: "View đẹp quá ❤️"
+                    <div style="color: rgba(255,255,255,0.5); font-size: 9px; margin-top: 2px;">1 giờ</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-bar">
+              <span class="tab active">🗺️</span>
+              <span class="tab">🔍</span>
+              <span class="tab">📷</span>
+              <span class="tab">💾</span>
+              <span class="tab">👤</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-sm text-gray-400">🔔 Activity · Notifications</div>
+      </div>
+
+      <!-- MAP + BOTTOM SHEET (place clicked) -->
+      <div class="reveal">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="map-bg"></div>
+            <div class="map-grid"></div>
+            <div class="status-bar relative" style="z-index: 10;">
+              <span>9:41</span>
+              <span>● ● ●</span>
+            </div>
+            <div class="search-overlay">
+              <div class="search-pill">
+                <span>🔍</span>
+                <span>Đà Lạt</span>
+              </div>
+            </div>
+            <div class="phone-content">
+              <div class="mini-pin" style="top: 22%; left: 20%;"></div>
+              <div class="mini-pin" style="top: 18%; left: 60%;"></div>
+              <div class="mini-pin cluster" style="top: 28%; left: 42%; transform: scale(1.3); box-shadow: 0 0 20px rgba(124,92,255,0.8);">5</div>
+              <div class="mini-pin" style="top: 35%; left: 75%;"></div>
+
+              <!-- Bottom sheet -->
+              <div style="position: absolute; bottom: 60px; left: 0; right: 0; background: rgba(10,12,20,0.95); backdrop-filter: blur(20px); border-top-left-radius: 20px; border-top-right-radius: 20px; border-top: 1px solid rgba(124,92,255,0.3); padding: 12px 14px 14px; max-height: 55%;">
+                <div style="width: 32px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 0 auto 10px;"></div>
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                  <div>
+                    <div style="font-size: 13px; font-weight: 700;">Cộng Cà Phê Tú Xương</div>
+                    <div style="font-size: 9px; color: rgba(255,255,255,0.5); display: flex; gap: 6px; align-items: center; margin-top: 2px;">
+                      ☕ Café · 0.3km · <span class="badge-verified">✓ Verified</span>
+                    </div>
+                  </div>
+                  <div style="font-size: 11px;">⋯</div>
+                </div>
+                <div style="display: flex; gap: 6px; margin-bottom: 10px; font-size: 9px;">
+                  <span style="background: rgba(124,92,255,0.15); color: #c4b5fd; padding: 3px 8px; border-radius: 999px;">💎 Hidden gem</span>
+                  <span style="background: rgba(34,211,238,0.15); color: #22d3ee; padding: 3px 8px; border-radius: 999px;">🔥 5 hôm nay</span>
+                  <span style="background: rgba(251,191,36,0.15); color: #fbbf24; padding: 3px 8px; border-radius: 999px;">4.9★</span>
+                </div>
+                <div style="font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 6px;">5 bài check-in hôm nay</div>
+                <div style="display: flex; gap: 6px; overflow: hidden;">
+                  <div style="width: 70px; height: 90px; border-radius: 10px; background: linear-gradient(135deg, #f472b6, #7c5cff); flex-shrink: 0; position: relative;">
+                    <div style="position: absolute; bottom: 4px; left: 4px; width: 14px; height: 14px; border-radius: 50%; background: linear-gradient(135deg, #fbbf24, #f472b6); border: 1.5px solid rgba(10,12,20,0.8);"></div>
+                  </div>
+                  <div style="width: 70px; height: 90px; border-radius: 10px; background: linear-gradient(135deg, #fbbf24, #f472b6); flex-shrink: 0; position: relative;">
+                    <div style="position: absolute; bottom: 4px; left: 4px; width: 14px; height: 14px; border-radius: 50%; background: linear-gradient(135deg, #22d3ee, #7c5cff); border: 1.5px solid rgba(10,12,20,0.8);"></div>
+                  </div>
+                  <div style="width: 70px; height: 90px; border-radius: 10px; background: linear-gradient(135deg, #22d3ee, #7c5cff); flex-shrink: 0; position: relative;">
+                    <div style="position: absolute; bottom: 4px; left: 4px; width: 14px; height: 14px; border-radius: 50%; background: linear-gradient(135deg, #34d399, #22d3ee); border: 1.5px solid rgba(10,12,20,0.8);"></div>
+                  </div>
+                  <div style="width: 70px; height: 90px; border-radius: 10px; background: linear-gradient(135deg, #34d399, #fbbf24); flex-shrink: 0; opacity: 0.5;"></div>
+                </div>
+                <button style="width: 100%; margin-top: 10px; background: linear-gradient(135deg, #7c5cff, #5b3df0); color: #fff; border: none; padding: 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">Xem tất cả 312 bài</button>
+              </div>
+            </div>
+            <div class="tab-bar">
+              <span class="tab active">🗺️</span>
+              <span class="tab">🔍</span>
+              <span class="tab">📷</span>
+              <span class="tab">💾</span>
+              <span class="tab">👤</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-sm text-gray-400">🗺️ Map · Place Bottom Sheet</div>
+      </div>
+
+      <!-- MAP CLEAN (no bottom sheet) -->
+      <div class="reveal" style="display: none;">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="map-bg"></div>
+            <div class="map-grid"></div>
+            <div class="status-bar relative" style="z-index: 10;">
+              <span>9:41</span>
+              <span>● ● ●</span>
+            </div>
+            <div class="search-overlay">
+              <div class="search-pill">
+                <span>🔍</span>
+                <span>Đà Lạt</span>
+              </div>
+              <div class="filter-row" style="margin-top: 8px;">
+                <span class="filter-chip active">Tất cả</span>
+                <span class="filter-chip">Café</span>
+                <span class="filter-chip">Food</span>
+                <span class="filter-chip">View</span>
+                <span class="filter-chip">Hidden</span>
+              </div>
+            </div>
+            <div class="phone-content">
+              <div class="mini-pin" style="top: 22%; left: 20%;"></div>
+              <div class="mini-pin" style="top: 18%; left: 60%;"></div>
+              <div class="mini-pin cluster" style="top: 28%; left: 42%; transform: scale(1.3); box-shadow: 0 0 20px rgba(124,92,255,0.8);">5</div>
+              <div class="mini-pin" style="top: 35%; left: 75%;"></div>
+              <div class="mini-pin" style="top: 45%; left: 28%;"></div>
+              <div class="mini-pin cluster" style="top: 52%; left: 55%;">8</div>
+              <div class="mini-pin" style="top: 60%; left: 22%;"></div>
+              <div class="mini-pin" style="top: 65%; left: 70%;"></div>
+              <div class="mini-pin" style="top: 75%; left: 45%;"></div>
+              <div class="mini-pin" style="top: 80%; left: 78%;"></div>
+
+              <!-- Pin label callout -->
+              <div style="position: absolute; top: 18%; left: 50%; transform: translateX(-50%); background: rgba(10,12,20,0.92); backdrop-filter: blur(12px); border: 1px solid rgba(124,92,255,0.4); border-radius: 10px; padding: 6px 10px; font-size: 9px; white-space: nowrap; box-shadow: 0 4px 16px rgba(124,92,255,0.3);">
+                <div style="font-weight: 600;">Cộng Cà Phê</div>
+                <div style="color: #34d399; font-size: 8px;">● 5 đang check-in</div>
+              </div>
+
+              <!-- Floating action buttons -->
+              <div style="position: absolute; bottom: 80px; right: 12px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="background: rgba(10,12,20,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08); border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 14px;">📍</div>
+                <div style="background: rgba(10,12,20,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08); border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 14px;">🧭</div>
+                <div style="background: rgba(10,12,20,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08); border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 14px;">⚙️</div>
+              </div>
+
+              <!-- Map stats top-right -->
+              <div style="position: absolute; top: 110px; right: 12px; background: rgba(10,12,20,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 6px 10px; font-size: 9px;">
+                <div style="color: rgba(255,255,255,0.5);">Hiển thị</div>
+                <div style="font-weight: 600; color: #c4b5fd;">142 places</div>
+              </div>
+            </div>
+            <div class="tab-bar">
+              <span class="tab active">🗺️</span>
+              <span class="tab">🔍</span>
+              <span class="tab">📷</span>
+              <span class="tab">💾</span>
+              <span class="tab">👤</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-sm text-gray-400">🗺️ Map · Full View</div>
+      </div>
+
+      <!-- HEATMAP MODE -->
+      <div class="reveal">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="map-bg"></div>
+            <div class="map-grid"></div>
+            <div class="status-bar relative" style="z-index: 10;">
+              <span>9:41</span>
+              <span>● ● ●</span>
+            </div>
+            <div class="search-overlay">
+              <div style="display: flex; gap: 6px;">
+                <span class="filter-chip">📍 Pin</span>
+                <span class="filter-chip active">🔥 Heatmap</span>
+                <span class="filter-chip">⚡ Recent</span>
+              </div>
+              <div class="filter-row" style="margin-top: 8px;">
+                <span class="filter-chip active">Café</span>
+                <span class="filter-chip">Food</span>
+                <span class="filter-chip">View</span>
+                <span class="filter-chip">Hidden</span>
+              </div>
+            </div>
+            <div class="phone-content">
+              <!-- Heatmap blobs -->
+              <div style="position: absolute; top: 22%; left: 18%; width: 90px; height: 90px; border-radius: 50%; background: radial-gradient(circle, rgba(239,68,68,0.7), rgba(251,191,36,0.4) 40%, rgba(124,92,255,0.2) 70%, transparent); filter: blur(8px);"></div>
+              <div style="position: absolute; top: 40%; left: 50%; width: 130px; height: 130px; border-radius: 50%; background: radial-gradient(circle, rgba(239,68,68,0.8), rgba(251,191,36,0.5) 35%, rgba(124,92,255,0.25) 70%, transparent); filter: blur(10px);"></div>
+              <div style="position: absolute; top: 55%; left: 15%; width: 70px; height: 70px; border-radius: 50%; background: radial-gradient(circle, rgba(251,191,36,0.6), rgba(124,92,255,0.3) 50%, transparent); filter: blur(8px);"></div>
+              <div style="position: absolute; top: 68%; left: 60%; width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle, rgba(34,211,238,0.5), rgba(124,92,255,0.25) 50%, transparent); filter: blur(8px);"></div>
+
+              <!-- Legend -->
+              <div style="position: absolute; bottom: 80px; left: 12px; background: rgba(10,12,20,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 8px 12px;">
+                <div style="font-size: 9px; color: rgba(255,255,255,0.6); margin-bottom: 6px; font-weight: 600;">Mật độ check-in</div>
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 9px;">
+                  <div style="width: 80px; height: 6px; border-radius: 3px; background: linear-gradient(90deg, rgba(124,92,255,0.5), #fbbf24, #ef4444);"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 8px; color: rgba(255,255,255,0.4); margin-top: 2px;">
+                  <span>thấp</span><span>cao</span>
+                </div>
+              </div>
+              <div style="position: absolute; bottom: 80px; right: 12px; background: rgba(10,12,20,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08); border-radius: 50%; padding: 10px; font-size: 14px;">📍</div>
+            </div>
+            <div class="tab-bar">
+              <span class="tab active">🗺️</span>
+              <span class="tab">🔍</span>
+              <span class="tab">📷</span>
+              <span class="tab">💾</span>
+              <span class="tab">👤</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-sm text-gray-400">🔥 Map · Heatmap Mode</div>
+      </div>
+
+      <!-- MAP WITH POST CAROUSEL -->
+      <div class="reveal">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="map-bg"></div>
+            <div class="map-grid"></div>
+            <div class="status-bar relative" style="z-index: 10;">
+              <span>9:41</span>
+              <span>● ● ●</span>
+            </div>
+            <div class="search-overlay">
+              <div class="search-pill">
+                <span>⚡</span>
+                <span>Đang hiện · 24h qua</span>
+                <span style="margin-left: auto; color: #34d399;">● Live</span>
+              </div>
+            </div>
+            <div class="phone-content">
+              <div class="mini-pin" style="top: 22%; left: 25%;"></div>
+              <div class="mini-pin" style="top: 30%; left: 55%; transform: rotate(-45deg) scale(1.3); box-shadow: 0 0 16px rgba(124,92,255,0.9);"></div>
+              <div class="mini-pin" style="top: 38%; left: 78%;"></div>
+              <div class="mini-pin" style="top: 45%; left: 35%;"></div>
+              <div class="mini-pin" style="top: 55%; left: 65%;"></div>
+
+              <!-- Post carousel -->
+              <div style="position: absolute; bottom: 70px; left: 0; right: 0; padding: 0 10px;">
+                <div style="display: flex; gap: 8px; overflow-x: auto;">
+                  <div style="min-width: 160px; background: rgba(10,12,20,0.92); backdrop-filter: blur(12px); border: 1px solid rgba(124,92,255,0.4); border-radius: 14px; overflow: hidden; flex-shrink: 0; box-shadow: 0 8px 24px rgba(124,92,255,0.3);">
+                    <div style="height: 80px; background: linear-gradient(135deg, #f472b6, #7c5cff); position: relative;">
+                      <div style="position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 6px; font-size: 8px; display: flex; align-items: center; gap: 3px;">
+                        <span style="width: 5px; height: 5px; border-radius: 50%; background: #34d399; display: inline-block;"></span> 2p
+                      </div>
+                      <span style="position: absolute; top: 6px; right: 6px; background: rgba(52,211,153,0.2); color: #34d399; padding: 2px 6px; border-radius: 6px; font-size: 8px;">✓</span>
+                    </div>
+                    <div style="padding: 6px 8px;">
+                      <div style="display: flex; align-items: center; gap: 4px;">
+                        <div class="avatar" style="width: 16px; height: 16px;"></div>
+                        <div style="font-size: 9px; font-weight: 600;">linh_dl</div>
+                      </div>
+                      <div style="font-size: 9px; color: rgba(255,255,255,0.7); margin-top: 4px;">📍 Cộng Cà Phê</div>
+                      <div style="font-size: 8px; color: rgba(255,255,255,0.4); margin-top: 2px;">❤️ 12 · 💬 3</div>
+                    </div>
+                  </div>
+                  <div style="min-width: 160px; background: rgba(10,12,20,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; overflow: hidden; flex-shrink: 0;">
+                    <div style="height: 80px; background: linear-gradient(135deg, #fbbf24, #f472b6); position: relative;">
+                      <div style="position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 6px; font-size: 8px;">12p</div>
+                      <span style="position: absolute; top: 6px; right: 6px; background: rgba(52,211,153,0.2); color: #34d399; padding: 2px 6px; border-radius: 6px; font-size: 8px;">✓</span>
+                    </div>
+                    <div style="padding: 6px 8px;">
+                      <div style="display: flex; align-items: center; gap: 4px;">
+                        <div class="avatar" style="width: 16px; height: 16px; background: linear-gradient(135deg, #34d399, #22d3ee);"></div>
+                        <div style="font-size: 9px; font-weight: 600;">minh.k</div>
+                      </div>
+                      <div style="font-size: 9px; color: rgba(255,255,255,0.7); margin-top: 4px;">📍 Mây Lang Thang</div>
+                      <div style="font-size: 8px; color: rgba(255,255,255,0.4); margin-top: 2px;">❤️ 48 · 💬 7</div>
+                    </div>
+                  </div>
+                  <div style="min-width: 160px; background: rgba(10,12,20,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; overflow: hidden; flex-shrink: 0;">
+                    <div style="height: 80px; background: linear-gradient(135deg, #22d3ee, #7c5cff);"></div>
+                    <div style="padding: 6px 8px;">
+                      <div style="display: flex; align-items: center; gap: 4px;">
+                        <div class="avatar" style="width: 16px; height: 16px;"></div>
+                        <div style="font-size: 9px; font-weight: 600;">duc.travel</div>
+                      </div>
+                      <div style="font-size: 9px; color: rgba(255,255,255,0.7); margin-top: 4px;">📍 An Café</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-bar">
+              <span class="tab active">🗺️</span>
+              <span class="tab">🔍</span>
+              <span class="tab">📷</span>
+              <span class="tab">💾</span>
+              <span class="tab">👤</span>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-sm text-gray-400">⚡ Map · Realtime Posts</div>
+      </div>
+
+      <!-- ONBOARDING -->
+      <div class="reveal">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="map-bg"></div>
+            <div class="map-grid"></div>
+            <div class="status-bar relative" style="z-index: 10;">
+              <span>9:41</span>
+              <span>● ● ●</span>
+            </div>
+            <div class="phone-content" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 24px;">
+              <div style="width: 80px; height: 80px; border-radius: 24px; background: linear-gradient(135deg, #7c5cff, #22d3ee); display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 700; margin-bottom: 20px; box-shadow: 0 20px 40px -10px rgba(124,92,255,0.6);">W</div>
+              <div style="font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 8px;">Wandr</div>
+              <div style="font-size: 11px; color: rgba(255,255,255,0.7); text-align: center; margin-bottom: 24px; line-height: 1.5;">Bản đồ du lịch thật.<br/>Không filter. Không fake.</div>
+              <div style="width: 100%; display: flex; flex-direction: column; gap: 8px;">
+                <button style="background: linear-gradient(135deg, #7c5cff, #5b3df0); color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 600;">Tiếp tục với SĐT</button>
+                <button style="background: rgba(255,255,255,0.06); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 600;">Đăng nhập Google</button>
+                <button style="background: rgba(255,255,255,0.06); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 600;">Đăng nhập Apple</button>
+              </div>
+              <div style="font-size: 8px; color: rgba(255,255,255,0.4); text-align: center; margin-top: 24px; line-height: 1.5;">Tiếp tục = đồng ý <span style="color: #c4b5fd;">Điều khoản</span> + <span style="color: #c4b5fd;">Privacy</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-4 text-sm text-gray-400">🚀 Onboarding · Splash</div>
+      </div>
+
+    </div>
+
+    <div class="text-center mt-2 text-xs text-gray-500">← Vuốt ngang →</div>
+
+    <!-- FEATURED: MAP FULL VIEW -->
+    <div class="mt-32 reveal">
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <div class="section-eyebrow">Featured Screen</div>
+        <h3 class="text-3xl md:text-4xl font-bold mb-4">Map Full View — <span class="gradient-text">trái tim</span> của app</h3>
+        <p class="text-gray-400">Mọi pin = bài check-in thật. Tap cluster để xem chi tiết, tap pin để mở place.</p>
+      </div>
+
+      <div class="flex justify-center px-4">
+        <div class="featured-phone">
+          <div class="featured-screen">
+            <div class="featured-notch"></div>
+            <div class="featured-map-bg"></div>
+            <div class="featured-grid"></div>
+
+            <!-- Status bar -->
+            <div style="position: relative; z-index: 10; padding: 18px 32px 8px; display: flex; justify-content: space-between; font-size: 13px; color: rgba(255,255,255,0.85); font-weight: 600;">
+              <span>9:41</span>
+              <span>● ● ●</span>
+            </div>
+
+            <!-- Search + filters -->
+            <div style="position: absolute; top: 52px; left: 18px; right: 18px; z-index: 5;">
+              <div style="background: rgba(10,12,20,0.85); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.1); border-radius: 999px; padding: 14px 22px; font-size: 15px; color: #fff; display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 17px;">🔍</span>
+                <span>Đà Lạt</span>
+                <span style="margin-left: auto; background: rgba(124,92,255,0.25); color: #c4b5fd; padding: 4px 10px; border-radius: 999px; font-size: 11px;">142 places</span>
+              </div>
+              <div style="display: flex; gap: 8px; margin-top: 12px; overflow: hidden;">
+                <span class="big-chip active">Tất cả</span>
+                <span class="big-chip">☕ Café</span>
+                <span class="big-chip">🍜 Food</span>
+                <span class="big-chip">🌊 View</span>
+                <span class="big-chip">💎 Hidden</span>
+              </div>
+            </div>
+
+            <!-- Pins -->
+            <div style="position: absolute; inset: 0;">
+              <div class="big-pin" style="top: 20%; left: 18%;"></div>
+              <div class="big-pin" style="top: 15%; left: 58%;"></div>
+              <div class="big-pin cluster" style="top: 26%; left: 42%; transform: scale(1.4); box-shadow: 0 0 28px rgba(124,92,255,0.9);">5</div>
+              <div class="big-pin" style="top: 33%; left: 76%;"></div>
+              <div class="big-pin" style="top: 42%; left: 26%;"></div>
+              <div class="big-pin cluster" style="top: 50%; left: 55%;">8</div>
+              <div class="big-pin" style="top: 58%; left: 20%;"></div>
+              <div class="big-pin" style="top: 63%; left: 72%;"></div>
+              <div class="big-pin" style="top: 72%; left: 45%;"></div>
+              <div class="big-pin" style="top: 78%; left: 80%;"></div>
+              <div class="big-pin" style="top: 80%; left: 15%;"></div>
+
+              <!-- Callout for highlighted cluster -->
+              <div style="position: absolute; top: 14%; left: 50%; transform: translateX(-50%); background: rgba(10,12,20,0.95); backdrop-filter: blur(14px); border: 1px solid rgba(124,92,255,0.45); border-radius: 14px; padding: 10px 14px; white-space: nowrap; box-shadow: 0 8px 28px rgba(124,92,255,0.4);">
+                <div style="font-size: 13px; font-weight: 700;">Cộng Cà Phê Tú Xương</div>
+                <div style="font-size: 11px; color: #34d399; margin-top: 2px; display: flex; align-items: center; gap: 4px;">● 5 đang check-in · 0.3km</div>
+                <div style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%) rotate(45deg); width: 12px; height: 12px; background: rgba(10,12,20,0.95); border-right: 1px solid rgba(124,92,255,0.45); border-bottom: 1px solid rgba(124,92,255,0.45);"></div>
+              </div>
+            </div>
+
+            <!-- Floating actions right -->
+            <div style="position: absolute; bottom: 110px; right: 18px; display: flex; flex-direction: column; gap: 10px; z-index: 5;">
+              <div class="big-fab">📍</div>
+              <div class="big-fab">🧭</div>
+              <div class="big-fab">⚙️</div>
+            </div>
+
+            <!-- Toggle modes left -->
+            <div style="position: absolute; bottom: 110px; left: 18px; background: rgba(10,12,20,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 6px; display: flex; flex-direction: column; gap: 4px; z-index: 5;">
+              <div style="background: rgba(124,92,255,0.25); color: #c4b5fd; padding: 8px 12px; border-radius: 10px; font-size: 11px; font-weight: 600;">📍 Pin</div>
+              <div style="color: rgba(255,255,255,0.5); padding: 8px 12px; font-size: 11px;">🔥 Heat</div>
+              <div style="color: rgba(255,255,255,0.5); padding: 8px 12px; font-size: 11px;">⚡ Live</div>
+            </div>
+
+            <!-- Tab bar -->
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(10,12,20,0.92); backdrop-filter: blur(16px); border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-around; padding: 14px 0 24px; font-size: 22px;">
+              <span style="color: #7c5cff;">🗺️</span>
+              <span style="opacity: 0.4;">🔍</span>
+              <span style="opacity: 0.4;">📷</span>
+              <span style="opacity: 0.4;">💾</span>
+              <span style="opacity: 0.4;">👤</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .featured-phone {
+    position: relative; width: 100%; max-width: 380px; aspect-ratio: 9/19.5;
+    background: #0a0c14; border-radius: 50px; padding: 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 60px 120px -30px rgba(124,92,255,0.5), 0 0 0 1px rgba(255,255,255,0.04) inset;
+  }
+  @media (min-width: 768px) { .featured-phone { max-width: 440px; } }
+  .featured-screen {
+    width: 100%; height: 100%; border-radius: 40px;
+    background: linear-gradient(180deg, #0d1020, #14091f);
+    overflow: hidden; position: relative;
+  }
+  .featured-notch {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 130px; height: 30px; background: #0a0c14;
+    border-bottom-left-radius: 18px; border-bottom-right-radius: 18px;
+    z-index: 20;
+  }
+  .featured-map-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 30% 40%, rgba(124,92,255,0.3), transparent 50%),
+      radial-gradient(circle at 70% 60%, rgba(34,211,238,0.22), transparent 50%),
+      linear-gradient(135deg, #0d1020, #1a0d2e);
+  }
+  .featured-grid {
+    position: absolute; inset: 0; opacity: 0.5;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 45px 45px;
+  }
+  .big-pin {
+    position: absolute; width: 30px; height: 30px;
+    background: linear-gradient(135deg, #7c5cff, #22d3ee);
+    border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
+    box-shadow: 0 4px 16px rgba(124,92,255,0.5);
+  }
+  .big-pin::after {
+    content: ''; width: 10px; height: 10px; background: #fff; border-radius: 50%;
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(45deg);
+  }
+  .big-pin.cluster {
+    border-radius: 50%; transform: none; width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 14px; font-weight: 700;
+  }
+  .big-pin.cluster::after { display: none; }
+  .big-chip {
+    background: rgba(10,12,20,0.85); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 999px;
+    padding: 8px 16px; font-size: 12px; color: rgba(255,255,255,0.8);
+    white-space: nowrap; font-weight: 500;
+  }
+  .big-chip.active {
+    background: rgba(124,92,255,0.25); border-color: rgba(124,92,255,0.5); color: #c4b5fd;
+  }
+  .big-fab {
+    background: rgba(10,12,20,0.88); backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 50%;
+    width: 50px; height: 50px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  }
+</style>
+
+<!-- TECH -->
+<section class="py-32 relative">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+      <div class="section-eyebrow">Technical</div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">Stack <span class="gradient-text">scale-ready</span> nhưng pragmatic.</h2>
+      <p class="text-gray-400 text-lg">Monolith event-driven trước. Tách service khi cần. Tránh microservice non.</p>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+      <div class="gradient-border p-5 reveal"><div class="text-xs text-gray-500 mb-1">FRONTEND</div><div class="font-semibold">React Native + Expo</div></div>
+      <div class="gradient-border p-5 reveal"><div class="text-xs text-gray-500 mb-1">MAPS</div><div class="font-semibold">Mapbox GL Native</div></div>
+      <div class="gradient-border p-5 reveal"><div class="text-xs text-gray-500 mb-1">BACKEND</div><div class="font-semibold">NestJS + BullMQ</div></div>
+      <div class="gradient-border p-5 reveal"><div class="text-xs text-gray-500 mb-1">DB</div><div class="font-semibold">Postgres 16 + PostGIS + pgvector</div></div>
+      <div class="gradient-border p-5 reveal"><div class="text-xs text-gray-500 mb-1">CACHE</div><div class="font-semibold">Redis 7 (Geo)</div></div>
+      <div class="gradient-border p-5 reveal"><div class="text-xs text-gray-500 mb-1">SEARCH</div><div class="font-semibold">OpenSearch</div></div>
+      <div class="gradient-border p-5 reveal"><div class="text-xs text-gray-500 mb-1">MEDIA</div><div class="font-semibold">Cloudflare R2 + Images</div></div>
+      <div class="gradient-border p-5 reveal"><div class="text-xs text-gray-500 mb-1">ML</div><div class="font-semibold">FastAPI + CLIP ViT-B/32</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ASK -->
+<section id="ask" class="py-32 relative">
+  <div class="glow glow-2" style="right: 50%; top: 30%;"></div>
+  <div class="glow glow-3" style="left: 50%; bottom: 0;"></div>
+  <div class="max-w-5xl mx-auto px-6 relative z-10">
+    <div class="gradient-border p-12 md:p-16 text-center reveal" style="border-color: rgba(124,92,255,0.4);">
+      <div class="section-eyebrow">Cơ Hội Đầu Tư</div>
+      <h2 class="text-4xl md:text-6xl font-bold mb-6">Pre-seed <span class="gradient-text">$300-500k</span></h2>
+      <p class="text-gray-400 text-lg mb-10 max-w-2xl mx-auto">
+        Để chứng minh PMF tại Đà Lạt + HCM trong 12 tháng. Sau khi đạt 50k DAU + retention proof → Seed $3-5M.
+      </p>
+
+      <div class="grid md:grid-cols-3 gap-6 mb-12 text-left">
+        <div class="p-6 rounded-2xl" style="background: rgba(124,92,255,0.08); border: 1px solid rgba(124,92,255,0.2);">
+          <div class="text-3xl font-bold mb-2">40%</div>
+          <div class="text-sm text-gray-300">Product + engineering (3 dev × 12 tháng)</div>
+        </div>
+        <div class="p-6 rounded-2xl" style="background: rgba(34,211,238,0.08); border: 1px solid rgba(34,211,238,0.2);">
+          <div class="text-3xl font-bold mb-2">35%</div>
+          <div class="text-sm text-gray-300">Growth + creator seeding 3 city</div>
+        </div>
+        <div class="p-6 rounded-2xl" style="background: rgba(244,114,182,0.08); border: 1px solid rgba(244,114,182,0.2);">
+          <div class="text-3xl font-bold mb-2">25%</div>
+          <div class="text-sm text-gray-300">Infra, ops, runway buffer</div>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4 mb-10 text-left max-w-2xl mx-auto">
+        <div class="p-4 rounded-xl" style="background: rgba(255,255,255,0.03);">
+          <div class="text-xs text-gray-500 mb-1">UNIT ECON TARGET</div>
+          <div class="text-sm">CAC &lt;$2 · ARPU $8-15</div>
+        </div>
+        <div class="p-4 rounded-xl" style="background: rgba(255,255,255,0.03);">
+          <div class="text-xs text-gray-500 mb-1">RUNWAY</div>
+          <div class="text-sm">18 tháng từ pre-seed</div>
+        </div>
+        <div class="p-4 rounded-xl" style="background: rgba(255,255,255,0.03);">
+          <div class="text-xs text-gray-500 mb-1">UPSIDE BEST CASE</div>
+          <div class="text-sm">Acquihire $40-80M năm 3 (Klook/Traveloka)</div>
+        </div>
+        <div class="p-4 rounded-xl" style="background: rgba(255,255,255,0.03);">
+          <div class="text-xs text-gray-500 mb-1">KILL CRITERIA</div>
+          <div class="text-sm">D30 &lt;15% sau 2 city → pivot</div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="mailto:vuonghao14298@gmail.com?subject=Wandr%20Investment%20Inquiry" class="btn-primary">Đặt lịch nói chuyện</a>
+        <a href="mailto:vuonghao14298@gmail.com?subject=Wandr%20Deck%20Request" class="btn-secondary">Gửi full deck</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-white/5 py-12">
+  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-cyan-400 flex items-center justify-center font-bold">W</div>
+      <span class="font-semibold">Wandr</span>
+      <span class="text-gray-500 text-sm ml-2">© 2026</span>
+    </div>
+    <div class="text-sm text-gray-500">Authentic travel discovery · Built in Vietnam</div>
+    <a href="mailto:vuonghao14298@gmail.com" class="text-sm text-gray-400 hover:text-white">vuonghao14298@gmail.com</a>
+  </div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

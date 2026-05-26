@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mindra — Hiểu hành vi số, giành lại sự chủ động</title>
+<meta name="description" content="Digital Behavior & Mental Wellness. Thống kê sử dụng app, thông báo tính toán cho bạn — không chặn app. AI on-device, data không rời máy." />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #010907;
+    --bg-alt: #04110c;
+    --surface: #08160f;
+    --text: #f4f7f5;
+    --text-soft: rgba(244,247,245,0.82);
+    --muted: rgba(244,247,245,0.64);
+    --border: rgba(244,247,245,0.12);
+    --accent: #69ecbf;
+    --accent-2: #09bc8a;
+    --accent-ink: #010907;
+    --accent-soft: rgba(105,236,191,0.14);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.6; overflow-x: hidden; max-width: 100vw;
+    -webkit-font-smoothing: antialiased;
+  }
+  section, footer { overflow-x: clip; position: relative; }
+  h1,h2,h3,h4 { font-family: 'Inter', sans-serif; letter-spacing: -0.03em; font-weight: 800; color: var(--text); }
+  .text-muted { color: var(--muted); }
+  .text-white { color: var(--text) !important; }
+  .bg-alt { background: var(--bg-alt); }
+  .accent { color: var(--accent); }
+
+  .glow { position: absolute; border-radius: 50%; filter: blur(130px); pointer-events: none; z-index: 0; }
+  .glow-lime { width: 520px; height: 520px; background: rgba(105,236,191,0.22); }
+  .glow-soft { width: 480px; height: 480px; background: rgba(105,236,191,0.10); }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--accent); font-weight: 600; font-size: 13px;
+    letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 14px;
+  }
+  .eyebrow::before { content:''; width: 18px; height: 2px; background: var(--accent); border-radius:2px; }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px; border-radius: 999px;
+    background: var(--accent-soft); border: 1px solid rgba(105,236,191,0.30);
+    font-size: 13px; color: var(--accent); font-weight: 500;
+  }
+  .chip-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+
+  .pill { padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--muted); }
+
+  .btn-primary {
+    background: var(--accent); color: var(--accent-ink); font-weight: 700;
+    padding: 13px 26px; border-radius: 999px; display: inline-block;
+    transition: transform .18s, box-shadow .18s; box-shadow: 0 8px 30px -8px rgba(105,236,191,0.5);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 40px -10px rgba(105,236,191,0.6); }
+  .btn-secondary {
+    background: rgba(255,255,255,0.05); color: var(--text); font-weight: 600; border: 1px solid var(--border);
+    padding: 13px 26px; border-radius: 999px; display: inline-block; transition: background .18s, border-color .18s;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.2); }
+
+  nav.top { position: fixed; top: 0; left: 0; right: 0; z-index: 50; backdrop-filter: blur(16px); background: rgba(1,9,7,0.72); border-bottom: 1px solid var(--border); }
+  #mobile-menu-btn { color: var(--text); cursor: pointer; transition: background .2s; }
+  #mobile-menu-btn:hover { background: rgba(255,255,255,0.08) !important; }
+  .mobile-nav-link { display: block; padding: 12px 14px; border-radius: 10px; color: rgba(244,244,245,0.85); font-weight: 500; transition: background .15s, color .15s; }
+  .mobile-nav-link:hover { background: var(--accent-soft); color: #fff; }
+  #mobile-menu { max-height: calc(100vh - 64px); overflow-y: auto; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 22px; transition: transform .25s, box-shadow .25s, border-color .25s; }
+  .card-hover:hover { transform: translateY(-4px); box-shadow: 0 24px 50px -24px rgba(105,236,191,0.25); border-color: rgba(105,236,191,0.4); }
+
+  .stat-num { font-weight: 900; font-size: clamp(34px, 5vw, 52px); line-height: 1; letter-spacing: -0.04em; }
+  .grad-ink { background: linear-gradient(120deg, #f4f7f5 25%, #69ecbf 90%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+
+  .feature-icon { width: 46px; height: 46px; border-radius: 13px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; font-size: 22px; border: 1px solid rgba(105,236,191,0.25); }
+
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s, transform .7s; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  table.tbl { width: 100%; border-collapse: collapse; }
+  table.tbl th, table.tbl td { padding: 13px 16px; border-bottom: 1px solid var(--border); text-align: left; font-size: 14px; vertical-align: top; }
+  table.tbl th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+  table.tbl tbody tr:hover { background: rgba(255,255,255,0.03); }
+  .yes { color: #69ecbf; font-weight: 600; }
+  .no { color: #f87171; font-weight: 600; }
+  .warn { color: #eac66a; font-weight: 600; }
+
+  .risk-badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+  .risk-fatal { background: rgba(248,113,113,0.14); color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
+  .risk-high { background: rgba(251,191,36,0.14); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+  .risk-med { background: var(--accent-soft); color: var(--accent); border: 1px solid rgba(105,236,191,0.3); }
+
+  /* phone (dark) */
+  .phone { position: relative; width: 100%; max-width: 290px; aspect-ratio: 9/19.5; background: #050506; border-radius: 42px; padding: 9px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 40px 90px -30px rgba(105,236,191,0.35), 0 8px 30px -10px rgba(0,0,0,0.6); }
+  .phone-screen { width: 100%; height: 100%; border-radius: 33px; background: linear-gradient(180deg,#0d0d11,#0a0a0c); overflow: hidden; position: relative; display: flex; flex-direction: column; }
+  .phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 96px; height: 24px; background: #050506; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; z-index: 20; }
+  .status-bar { padding: 15px 22px 6px; display: flex; justify-content: space-between; font-size: 10px; color: rgba(255,255,255,0.6); font-weight: 700; }
+  .phone-content { flex: 1; overflow-y: auto; padding: 8px 14px 18px; }
+  .mini-card { background: rgba(255,255,255,0.045); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 12px 14px; }
+  .bar-track { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.1); overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg,#69ecbf,#cffce7); }
+  .hrs { display: flex; align-items: flex-end; gap: 3px; height: 46px; }
+  .hrs span { flex: 1; background: rgba(105,236,191,0.35); border-radius: 2px; }
+  .hrs span.night { background: #69ecbf; }
+
+  /* chat */
+  .chat-bubble { max-width: 86%; padding: 10px 13px; border-radius: 16px; font-size: 12.5px; line-height: 1.5; }
+  .chat-user { align-self: flex-end; background: var(--accent); color: var(--accent-ink); border-bottom-right-radius: 5px; font-weight: 500; }
+  .chat-app { align-self: flex-start; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-bottom-left-radius: 5px; color: var(--text); }
+  .plan-row { display: flex; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.07); font-size: 12px; }
+  .plan-row:last-child { border-bottom: none; }
+  .notif { background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-left: 3px solid var(--accent); border-radius: 12px; padding: 10px 12px; }
+
+  .step-num { width: 44px; height: 44px; border-radius: 12px; background: var(--accent); color: var(--accent-ink); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:18px; }
+
+  .goal-card { cursor: pointer; position: relative; user-select: none; }
+  .goal-card.selected { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent), 0 20px 50px -26px rgba(105,236,191,0.45); }
+  .goal-card.selected .feature-icon { background: var(--accent); border-color: var(--accent); }
+  .goal-check { position: absolute; top: 14px; right: 14px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: none; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; }
+  .goal-card.selected .goal-check { display: flex; }
+
+  details { border-bottom: 1px solid var(--border); }
+  details summary { cursor: pointer; list-style: none; padding: 20px 0; display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: #fff; }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after { content: '+'; font-size: 26px; color: var(--accent); transition: transform .2s; font-weight: 400; }
+  details[open] summary::after { transform: rotate(45deg); }
+
+  .scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .toggle-wrap { background: rgba(255,255,255,0.05); border: 1px solid var(--border); }
+  .toggle-btn { padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s; color: var(--muted); }
+  .toggle-btn.active { background: var(--accent); color: var(--accent-ink); }
+  code { color: var(--accent); font-size: 0.92em; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-xl flex items-center justify-center font-extrabold" style="background:var(--accent);color:var(--accent-ink)">M</div>
+      <span class="font-bold text-lg">Mindra</span>
+    </div>
+    <div class="hidden md:flex items-center gap-7 text-sm text-muted">
+      <a href="#how" class="hover:text-white">Cách hoạt động</a>
+      <a href="#targets" class="hover:text-white">Mục tiêu</a>
+      <a href="#features" class="hover:text-white">Tính năng</a>
+      <a href="#flow" class="hover:text-white">Demo</a>
+      <a href="#platform" class="hover:text-white">iOS/Android</a>
+      <a href="#market" class="hover:text-white">Thị trường</a>
+      <a href="#pricing" class="hover:text-white">Giá</a>
+      <a href="#faq" class="hover:text-white">FAQ</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="hidden lg:inline-block text-sm text-muted hover:text-white" style="padding:9px 12px;">← Wandr</a>
+      <a href="#flow" class="btn-primary text-sm hidden sm:inline-block" style="padding:9px 18px;">Xem demo</a>
+      <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center w-10 h-10 rounded-xl" style="border:1px solid var(--border);" aria-label="Menu" aria-expanded="false">
+        <svg id="menu-icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg id="menu-icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div id="mobile-menu" class="md:hidden border-t" style="display:none;background:rgba(1,9,7,0.97);border-color:var(--border)">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col gap-1 text-sm">
+      <a href="#how" class="mobile-nav-link">Cách hoạt động</a>
+      <a href="#targets" class="mobile-nav-link">Mục tiêu của bạn</a>
+      <a href="#features" class="mobile-nav-link">Tính năng</a>
+      <a href="#flow" class="mobile-nav-link">Demo "Tôi đang stress"</a>
+      <a href="#platform" class="mobile-nav-link">iOS vs Android</a>
+      <a href="#market" class="mobile-nav-link">Thị trường</a>
+      <a href="#risks" class="mobile-nav-link">Rủi ro</a>
+      <a href="#pricing" class="mobile-nav-link">Giá &amp; Doanh thu</a>
+      <a href="#roadmap" class="mobile-nav-link">Roadmap</a>
+      <a href="#faq" class="mobile-nav-link">FAQ</a>
+      <a href="index.html" class="mobile-nav-link" style="border-top:1px solid var(--border);margin-top:6px;padding-top:14px;">← Quay lại Wandr</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="pt-36 pb-20">
+  <div class="glow glow-lime" style="top:-150px;left:-120px;"></div>
+  <div class="glow glow-soft" style="top:120px;right:-160px;"></div>
+  <div class="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-14 items-center relative z-10">
+    <div class="reveal">
+      <span class="chip mb-6"><span class="chip-dot"></span>Digital Behavior &amp; Mental Wellness</span>
+      <h1 class="text-5xl md:text-6xl leading-[1.05] mb-6">
+        Hiểu hành vi số.<br><span class="grad-ink">Giành lại sự chủ động.</span>
+      </h1>
+      <p class="text-lg text-muted mb-8 max-w-lg">
+        Mindra thống kê cách bạn dùng app, tính toán pattern, và <strong class="text-white">gửi thông báo nhẹ nhàng cho bạn</strong> — không chặn app, không phán xét. Bạn luôn là người quyết định.
+      </p>
+      <div class="flex flex-wrap gap-3 mb-8 text-xs">
+        <span class="pill">🔔 Thông báo, không chặn</span>
+        <span class="pill">🔒 Data không rời máy</span>
+        <span class="pill">🧠 AI on-device</span>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a href="#flow" class="btn-primary">Xem demo "Tôi đang stress"</a>
+        <a href="#how" class="btn-secondary">Cách hoạt động</a>
+      </div>
+    </div>
+
+    <div class="reveal flex justify-center">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="status-bar"><span>9:41</span><span>Mindra</span></div>
+          <div class="phone-content flex flex-col gap-3">
+            <div class="text-xs text-muted font-semibold">Hôm nay · Thứ Ba</div>
+            <div class="mini-card">
+              <div class="flex justify-between items-end">
+                <div><div class="text-[11px] text-muted">Screen time</div><div class="text-2xl font-extrabold text-white">3h 12m</div></div>
+                <div class="text-[11px] warn">▲ 18%</div>
+              </div>
+              <div class="hrs mt-3">
+                <span style="height:30%"></span><span style="height:18%"></span><span style="height:45%"></span>
+                <span style="height:60%"></span><span style="height:35%"></span><span style="height:50%"></span>
+                <span style="height:25%"></span><span class="night" style="height:78%"></span><span class="night" style="height:92%"></span>
+              </div>
+              <div class="flex justify-between text-[9px] text-muted mt-1"><span>0h</span><span>12h</span><span>23h</span></div>
+            </div>
+            <div class="mini-card">
+              <div class="flex justify-between text-[12px] mb-1"><span class="font-semibold">TikTok</span><span class="text-muted">1h 24m · 78 lần</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width:82%"></div></div>
+            </div>
+            <div class="notif">
+              <div class="text-[11px] font-semibold mb-0.5 accent">🔔 Mindra</div>
+              <div class="text-[11px] text-muted">Bạn đã mở TikTok 78 lần hôm nay — 45% sau 22h. Muốn xem gợi ý?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="bg-alt border-y" style="border-color:var(--border)">
+  <div class="max-w-6xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-center reveal">
+    <div><div class="stat-num grad-ink">$7B</div><div class="text-muted text-sm mt-2">Thị trường wellness app</div></div>
+    <div><div class="stat-num grad-ink">~15%</div><div class="text-muted text-sm mt-2">Tăng trưởng/năm (CAGR)</div></div>
+    <div><div class="stat-num grad-ink">58–80</div><div class="text-muted text-sm mt-2">Lần mở máy/ngày</div></div>
+    <div><div class="stat-num grad-ink">100%</div><div class="text-muted text-sm mt-2">Xử lý on-device</div></div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem" class="py-24">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="reveal max-w-2xl mb-14">
+      <div class="eyebrow">Vấn đề</div>
+      <h2 class="text-4xl md:text-5xl mb-4">Điện thoại được thiết kế để bạn <span class="accent">không buông được</span>.</h2>
+      <p class="text-muted text-lg">Công cụ "digital wellbeing" miễn phí của hệ điều hành không thật lòng muốn bạn dùng ít hơn.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="card card-hover p-7 reveal">
+        <div class="feature-icon mb-4">🎰</div>
+        <h3 class="text-xl mb-2">Attention economy</h3>
+        <p class="text-muted text-sm">App social tối ưu từng pixel để giữ bạn. Scroll vô thức trở thành hành vi mặc định.</p>
+      </div>
+      <div class="card card-hover p-7 reveal">
+        <div class="feature-icon mb-4">⚖️</div>
+        <h3 class="text-xl mb-2">Mâu thuẫn lợi ích của OS</h3>
+        <p class="text-muted text-sm">Apple &amp; Google kiếm tiền từ attention nên không thể thật lòng giúp bạn dùng máy ít đi. Mindra thì có thể.</p>
+      </div>
+      <div class="card card-hover p-7 reveal">
+        <div class="feature-icon mb-4">🧩</div>
+        <h3 class="text-xl mb-2">Biết ≠ Đổi</h3>
+        <p class="text-muted text-sm">Biết mình scroll nhiều không làm bạn ngừng. Cần thông báo &amp; nhắc đúng khoảnh khắc — không phải báo cáo khô khan.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="py-24 bg-alt">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="reveal max-w-2xl mb-14">
+      <div class="eyebrow">Cách hoạt động</div>
+      <h2 class="text-4xl md:text-5xl mb-4">Ba bước. <span class="accent">Không chặn app.</span></h2>
+      <p class="text-muted text-lg">Mindra thống kê, tính toán, rồi thông báo cho bạn. Hành động là của bạn.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="card p-8 reveal">
+        <div class="step-num mb-5">1</div>
+        <div class="text-sm font-semibold accent mb-1">Reflect</div>
+        <h3 class="text-2xl mb-3">Thống kê</h3>
+        <p class="text-muted text-sm">Theo dõi cách bạn dùng app — số lần mở, thời lượng, khung giờ — ngay trên máy, riêng tư.</p>
+      </div>
+      <div class="card p-8 reveal" style="border-color:rgba(105,236,191,0.45)">
+        <div class="step-num mb-5">2</div>
+        <div class="text-sm font-semibold accent mb-1">Notify</div>
+        <h3 class="text-2xl mb-3">Thông báo tính toán</h3>
+        <p class="text-muted text-sm">AI on-device tính pattern rồi <strong class="text-white">gửi thông báo</strong>: "mở TikTok 78 lần", "dùng nhiều sau 22h". <strong class="text-white">Không chặn app</strong> — chỉ giúp bạn thấy.</p>
+      </div>
+      <div class="card p-8 reveal">
+        <div class="step-num mb-5">3</div>
+        <div class="text-sm font-semibold accent mb-1">Improve</div>
+        <h3 class="text-2xl mb-3">Tiến triển</h3>
+        <p class="text-muted text-sm">Chọn mục tiêu, theo dõi tiến bộ 7 ngày theo outcome. Mindra học cái gì hiệu quả với bạn.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TARGETS -->
+<section id="targets" class="py-24">
+  <div class="glow glow-soft" style="top:30%;right:-160px;"></div>
+  <div class="max-w-6xl mx-auto px-6 relative z-10">
+    <div class="reveal max-w-2xl mb-12">
+      <div class="eyebrow">Mục tiêu của bạn</div>
+      <h2 class="text-4xl md:text-5xl mb-4">Bạn chọn mục tiêu. <span class="accent">Mindra lo phần còn lại.</span></h2>
+      <p class="text-muted text-lg">"Mình đang stress", "lãng phí quá nhiều thời gian cho mạng xã hội"… Chọn điều bạn muốn cải thiện — Mindra điều chỉnh thống kê &amp; thông báo theo đúng mục tiêu đó.</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="card goal-card p-6 reveal selected">
+        <div class="goal-check">✓</div>
+        <div class="feature-icon mb-4">😮‍💨</div>
+        <h3 class="text-lg mb-1">Giảm stress số</h3>
+        <p class="text-muted text-sm">Phát hiện scroll căng thẳng, nhắc bạn khi đang lướt dồn dập liên tục.</p>
+      </div>
+      <div class="card goal-card p-6 reveal selected">
+        <div class="goal-check">✓</div>
+        <div class="feature-icon mb-4">📱</div>
+        <h3 class="text-lg mb-1">Bớt mạng xã hội</h3>
+        <p class="text-muted text-sm">Đo thời gian dùng social, thông báo khi vượt ngưỡng bạn đặt.</p>
+      </div>
+      <div class="card goal-card p-6 reveal">
+        <div class="goal-check">✓</div>
+        <div class="feature-icon mb-4">🌙</div>
+        <h3 class="text-lg mb-1">Ngủ sớm hơn</h3>
+        <p class="text-muted text-sm">Nhắc wind-down khi bạn dùng máy khuya, báo pattern ngủ muộn.</p>
+      </div>
+      <div class="card goal-card p-6 reveal">
+        <div class="goal-check">✓</div>
+        <div class="feature-icon mb-4">🎯</div>
+        <h3 class="text-lg mb-1">Tập trung hơn</h3>
+        <p class="text-muted text-sm">Báo khi bạn mở app phân tâm trong giờ deep work bạn chọn.</p>
+      </div>
+      <div class="card goal-card p-6 reveal">
+        <div class="goal-check">✓</div>
+        <div class="feature-icon mb-4">🎬</div>
+        <h3 class="text-lg mb-1">Giảm lướt video ngắn</h3>
+        <p class="text-muted text-sm">Theo dõi Reels / Shorts / TikTok, nhắc nhẹ khi sa đà.</p>
+      </div>
+      <div class="card goal-card p-6 reveal">
+        <div class="goal-check">✓</div>
+        <div class="feature-icon mb-4">🤳</div>
+        <h3 class="text-lg mb-1">Bớt cầm máy vô thức</h3>
+        <p class="text-muted text-sm">Đếm số lần mở khóa, báo khi bạn check máy liên tục theo thói quen.</p>
+      </div>
+    </div>
+
+    <div class="reveal mt-8 flex flex-wrap items-center gap-4">
+      <span class="chip"><span class="chip-dot"></span>Đã chọn <span id="goal-count">2</span> mục tiêu</span>
+      <a href="#flow" class="btn-primary">Tạo kế hoạch của tôi</a>
+      <span class="text-muted text-sm">Chọn nhiều mục tiêu cũng được · đổi bất cứ lúc nào</span>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="py-24">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="reveal max-w-2xl mb-14">
+      <div class="eyebrow">Tính năng</div>
+      <h2 class="text-4xl md:text-5xl mb-4">Mọi thứ bạn cần để <span class="accent">tự chủ</span>.</h2>
+      <p class="text-muted text-lg">Trọng tâm: thống kê thật + thông báo thông minh. Không chặn, không ép.</p>
+    </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="card card-hover p-7 reveal" style="border-color:rgba(105,236,191,0.4)">
+        <div class="feature-icon mb-4">🔔</div>
+        <h3 class="text-lg mb-2">Thông báo thông minh <span class="chip ml-1" style="padding:2px 8px;font-size:11px">★ lõi</span></h3>
+        <p class="text-muted text-sm">Tính toán từ usage rồi gửi thông báo cho bạn — "mở 78 lần", "vượt limit", "khuya rồi". <strong class="text-white">Không chặn app.</strong> Bạn tự quyết.</p>
+      </div>
+      <div class="card card-hover p-7 reveal">
+        <div class="feature-icon mb-4">📊</div>
+        <h3 class="text-lg mb-2">Thống kê sử dụng app</h3>
+        <p class="text-muted text-sm">Số lần mở, thời lượng, app top, phân bố theo giờ, unlock count. Weekly reflection report.</p>
+      </div>
+      <div class="card card-hover p-7 reveal">
+        <div class="feature-icon mb-4">🧠</div>
+        <h3 class="text-lg mb-2">AI on-device</h3>
+        <p class="text-muted text-sm">Insight ngôn ngữ tự nhiên, confirm-the-insight, pattern detection. Core ML / Foundation Models — không gửi đi đâu.</p>
+      </div>
+      <div class="card card-hover p-7 reveal">
+        <div class="feature-icon mb-4">🎯</div>
+        <h3 class="text-lg mb-2">Mục tiêu &amp; Tiến triển</h3>
+        <p class="text-muted text-sm">Chọn mục tiêu (focus / ngủ / bớt scroll), progress theo outcome, "ngày tốt" thay vì phạt streak.</p>
+      </div>
+      <div class="card card-hover p-7 reveal">
+        <div class="feature-icon mb-4">⚡</div>
+        <h3 class="text-lg mb-2">Stress → Plan</h3>
+        <p class="text-muted text-sm">Nói "tôi đang stress" → Mindra đọc data thật → gợi ý app nào nên giảm + khung giờ nào, theo dõi 7 ngày.</p>
+      </div>
+      <div class="card card-hover p-7 reveal">
+        <div class="feature-icon mb-4">🔒</div>
+        <h3 class="text-lg mb-2">Privacy-first</h3>
+        <p class="text-muted text-sm">Xử lý on-device, data không rời máy, không bán/share. Ngôn ngữ giả thuyết, không chẩn đoán.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNATURE FLOW -->
+<section id="flow" class="py-24 bg-alt">
+  <div class="glow glow-soft" style="top:50%;left:-150px;"></div>
+  <div class="max-w-6xl mx-auto px-6 relative z-10">
+    <div class="reveal max-w-2xl mb-14">
+      <div class="eyebrow">Demo</div>
+      <h2 class="text-4xl md:text-5xl mb-4">"Tôi đang stress, giúp tôi giảm dùng app"</h2>
+      <p class="text-muted text-lg">Mindra đọc <strong class="text-white">số liệu thật của bạn</strong> rồi gợi ý app nào nên giảm, giờ nào — bằng thông báo &amp; nhắc, không chặn.</p>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div class="reveal flex justify-center">
+        <div class="phone" style="max-width:310px">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="status-bar"><span>9:41</span><span>Mindra · Coach</span></div>
+            <div class="phone-content flex flex-col gap-2.5">
+              <div class="chat-bubble chat-user">Tôi đang stress, giúp tôi giảm dùng app 🙏</div>
+              <div class="chat-bubble chat-app">Để mình xem 7 ngày qua của bạn nhé…</div>
+              <div class="chat-bubble chat-app">
+                3 app ngốn nhiều nhất + có dấu hiệu scroll căng thẳng:
+                <div class="mt-2 space-y-1 text-[12px]">
+                  <div class="flex justify-between"><span>📱 TikTok</span><span class="text-muted">2.1h · 78 lần · 45% sau 22h</span></div>
+                  <div class="flex justify-between"><span>📱 Instagram</span><span class="text-muted">1.3h · 52 lần</span></div>
+                  <div class="flex justify-between"><span>📱 X</span><span class="text-muted">48m · giờ làm</span></div>
+                </div>
+              </div>
+              <div class="mini-card" style="border-color:rgba(105,236,191,0.4)">
+                <div class="text-[11px] accent font-semibold mb-2">📋 Gợi ý · thông báo, không chặn</div>
+                <div class="plan-row"><span>TikTok</span><span class="text-muted">nhắc khi vượt 30m + báo lúc khuya</span></div>
+                <div class="plan-row"><span>Instagram</span><span class="text-muted">thông báo số lần mở</span></div>
+                <div class="plan-row"><span>X</span><span class="text-muted">nhắc khi mở giờ làm</span></div>
+              </div>
+              <div class="flex gap-2">
+                <span class="text-[11px] px-3 py-1.5 rounded-full flex-1 text-center font-semibold" style="background:var(--accent);color:var(--accent-ink)">Bật nhắc</span>
+                <span class="text-[11px] px-3 py-1.5 rounded-full" style="border:1px solid var(--border)">Chỉnh</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal space-y-4">
+        <div class="card p-6">
+          <div class="text-sm font-semibold accent mb-1">JITAI — Just-In-Time Adaptive Intervention</div>
+          <p class="text-muted text-sm">Khung học thuật: gợi ý đúng việc, đúng lúc, theo ngữ cảnh.</p>
+          <div class="mt-3 text-xs font-mono rounded-xl p-3" style="background:rgba(255,255,255,0.04);color:var(--accent)">gợi ý = f( trạng thái + hành vi + ngữ cảnh giờ )</div>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="card p-5"><div class="font-semibold mb-1">① Chấm điểm app</div><p class="text-muted text-sm">Xếp hạng theo duration + lần mở + night-share → top app cần giảm.</p></div>
+          <div class="card p-5"><div class="font-semibold mb-1">② Tìm khung giờ</div><p class="text-muted text-sm">Gom usage theo giờ → đánh dấu khung "hại" (khuya, giờ làm).</p></div>
+          <div class="card p-5"><div class="font-semibold mb-1">③ Mục tiêu giảm</div><p class="text-muted text-sm">Cắt ~30–40%, không cắt sốc về 0 → tạo win đạt được.</p></div>
+          <div class="card p-5"><div class="font-semibold mb-1">④ Học adaptive</div><p class="text-muted text-sm">Sau 7 ngày đo hiệu quả → giữ cái work, đổi cái user hay bỏ qua.</p></div>
+        </div>
+        <div class="card p-5" style="border-color:rgba(248,113,113,0.3);background:rgba(248,113,113,0.06)">
+          <div class="text-sm font-semibold no mb-1">⚠ Ranh giới an toàn</div>
+          <p class="text-muted text-sm">Chỉ ánh xạ "stress" sang hành vi số (app, giờ) — không kê hoạt động đời thực, không chẩn đoán. Giọng giả thuyết, luôn có "Bỏ qua".</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORM -->
+<section id="platform" class="py-24">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="reveal max-w-2xl mb-14">
+      <div class="eyebrow">iOS vs Android</div>
+      <h2 class="text-4xl md:text-5xl mb-4">Cùng làm được — <span class="accent">theo cách của mỗi nền</span>.</h2>
+      <p class="text-muted text-lg">Vì Mindra <strong class="text-white">không chặn app</strong> và <strong class="text-white">không cần server</strong> (chỉ thống kê + thông báo, xử lý on-device), iOS đạt trải nghiệm tương đương Android.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 mb-8">
+      <div class="card p-7 reveal">
+        <div class="feature-icon mb-3">🍎</div>
+        <h3 class="text-xl mb-2">iOS — local-only, đầy đủ cho use case này</h3>
+        <p class="text-muted text-sm mb-3">DeviceActivity report extension tính usage (số lần mở qua <code>numberOfPickups</code>, thời lượng, tên app) → ghi <strong class="text-white">App Group</strong> → app chính đọc → <strong class="text-white">AI on-device</strong> sinh insight → gửi <strong class="text-white">local notification</strong> cho bạn.</p>
+        <div class="text-xs text-muted">Vì chỉ thống kê + thông báo (không chặn, không server) → <span class="yes">đạt parity với Android</span>.</div>
+      </div>
+      <div class="card p-7 reveal">
+        <div class="feature-icon mb-3">🤖</div>
+        <h3 class="text-xl mb-2">Android — cùng luồng, dữ liệu mịn hơn</h3>
+        <p class="text-muted text-sm mb-3"><code>UsageStatsManager</code> cho thống kê chi tiết (raw event + timestamp) → AI on-device → <strong class="text-white">notification</strong>. Cùng triết lý thông báo, không chặn.</p>
+        <div class="text-xs text-muted">Granularity mịn hơn (timestamp từng lần) nhưng <span class="text-white font-semibold">trải nghiệm user giống nhau</span>.</div>
+      </div>
+    </div>
+
+    <div class="card p-2 reveal mb-6">
+      <div class="scroll-x">
+        <table class="tbl">
+          <thead><tr><th>Khả năng (use case: thống kê + thông báo)</th><th>iOS</th><th>Android</th></tr></thead>
+          <tbody>
+            <tr><td>Số lần mở app</td><td class="yes">✅ numberOfPickups</td><td class="yes">✅ queryEvents</td></tr>
+            <tr><td>Thời lượng / tên app</td><td class="yes">✅ on-device</td><td class="yes">✅</td></tr>
+            <tr><td>AI on-device sinh insight</td><td class="yes">✅ Core ML / Foundation Models</td><td class="yes">✅ Core ML / TFLite</td></tr>
+            <tr><td>Lưu &amp; đọc qua App Group / DB local</td><td class="yes">✅</td><td class="yes">✅</td></tr>
+            <tr><td>Gửi thông báo cho user</td><td class="yes">✅ local notification</td><td class="yes">✅</td></tr>
+            <tr><td>Timestamp từng lần mở</td><td class="warn">◑ aggregate/segment</td><td class="yes">✅ chi tiết</td></tr>
+            <tr><td>Cần quyền rủi ro (block/overlay)</td><td class="yes">✅ Không cần (không chặn)</td><td class="yes">✅ Không cần</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="card p-6 reveal" style="border-color:rgba(105,236,191,0.35);background:rgba(105,236,191,0.05)">
+        <div class="text-sm font-semibold yes mb-1">✓ Lợi thế của "không chặn"</div>
+        <p class="text-muted text-sm">Không dùng FamilyControls shield (iOS) hay AccessibilityService overlay (Android) → tránh quyền nhạy cảm nhất → <strong class="text-white">giảm mạnh rủi ro bị gỡ store</strong>. Chỉ cần quyền đọc usage + gửi notification.</p>
+      </div>
+      <div class="card p-6 reveal">
+        <div class="text-sm font-semibold mb-1 text-white">Khi nào Android vượt trội?</div>
+        <p class="text-muted text-sm">Chỉ khi sau này muốn <strong class="text-white">server-side cross-user ML</strong> (gom data train model chung). Với scope hiện tại (on-device, thông báo) → không cần, nên iOS parity giữ vững.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET -->
+<section id="market" class="py-24 bg-alt">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="reveal max-w-2xl mb-14">
+      <div class="eyebrow">Thị trường</div>
+      <h2 class="text-4xl md:text-5xl mb-4">Thị trường thật, đang lên — <span class="accent">nhóm trả tiền hẹp</span>.</h2>
+      <p class="text-muted text-lg">Cơ hội rõ, nhưng đừng anchor vào Calm. Đa số app mảng này là business $0.5–5M ARR.</p>
+    </div>
+    <div class="grid lg:grid-cols-2 gap-8 items-start">
+      <div class="card p-7 reveal">
+        <h3 class="text-lg mb-4">Tăng trưởng thị trường (USD, ước tính)</h3>
+        <canvas id="marketChart" height="220"></canvas>
+      </div>
+      <div class="reveal">
+        <div class="card p-2 mb-5">
+          <div class="scroll-x">
+            <table class="tbl">
+              <thead><tr><th>App</th><th>Mô hình</th><th>Quy mô (ước)</th></tr></thead>
+              <tbody>
+                <tr><td>Calm / Headspace</td><td>Sub wellness</td><td class="yes">~$300M mỗi cái (hiếm)</td></tr>
+                <tr><td>Opal</td><td>Sub chặn app</td><td class="warn">vài triệu $ ARR</td></tr>
+                <tr><td>One Sec</td><td>Sub friction</td><td>nhỏ–vừa</td></tr>
+                <tr><td>Forest</td><td>Mua 1 lần</td><td>hàng chục triệu DL</td></tr>
+                <tr><td>Daylio / Finch</td><td>Mood / self-care</td><td class="yes">retention cao</td></tr>
+                <tr><td>Wysa / Woebot</td><td>AI mental health</td><td>B2B2C</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card p-5" style="border-color:rgba(105,236,191,0.35);background:rgba(105,236,191,0.05)">
+          <div class="text-sm font-semibold mb-1 accent">🎯 Khoảng trống chưa ai làm tốt</div>
+          <p class="text-muted text-sm">Nối <strong class="text-white">thống kê hành vi ↔ trạng thái suy diễn ↔ thông báo đúng khoảnh khắc</strong>, on-device, không chặn. Đa số app chỉ làm 1 trong 3.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RISKS -->
+<section id="risks" class="py-24">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="reveal max-w-2xl mb-14">
+      <div class="eyebrow">Rủi ro · Thành thật</div>
+      <h2 class="text-4xl md:text-5xl mb-4">Rủi ro lớn nhất <span class="accent">không phải kỹ thuật</span>.</h2>
+      <p class="text-muted text-lg">Kỹ thuật là phần dễ. Cái giết app là hành vi, retention, cạnh tranh OS miễn phí.</p>
+    </div>
+    <div class="card p-2 reveal">
+      <div class="scroll-x">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Rủi ro</th><th>Loại</th><th>Mức độ</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><strong class="text-white">Awareness ≠ đổi hành vi</strong> — thấy "hay" rồi quên</td><td>Sản phẩm</td><td><span class="risk-badge risk-fatal">Tử vong</span></td></tr>
+            <tr><td>2</td><td><strong class="text-white">Retention paradox</strong> — thành công = dùng app ít đi</td><td>Cấu trúc</td><td><span class="risk-badge risk-high">Cao</span></td></tr>
+            <tr><td>3</td><td><strong class="text-white">OS miễn phí</strong> cạnh tranh (Screen Time/Digital Wellbeing)</td><td>Thị trường</td><td><span class="risk-badge risk-high">Cao</span></td></tr>
+            <tr><td>4</td><td><strong class="text-white">Inference tâm lý sai</strong> → mất trust</td><td>Đạo đức</td><td><span class="risk-badge risk-high">Cao</span></td></tr>
+            <tr><td>5</td><td><strong class="text-white">Store gỡ app</strong> — <span class="yes">giảm mạnh nhờ không chặn</span></td><td>Policy</td><td><span class="risk-badge risk-med">Thấp–trung</span></td></tr>
+            <tr><td>6</td><td><strong class="text-white">Nhóm cần nhất trả ít nhất</strong></td><td>Monetization</td><td><span class="risk-badge risk-med">Trung</span></td></tr>
+            <tr><td>7</td><td><strong class="text-white">Thông báo nhiều = phiền</strong> → user tắt/gỡ</td><td>Sản phẩm</td><td><span class="risk-badge risk-med">Trung</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="grid md:grid-cols-2 gap-6 mt-8">
+      <div class="card p-6 reveal"><h3 class="font-semibold mb-2 accent">Chống #1 &amp; #2</h3><p class="text-muted text-sm">Thông báo phải đúng lúc + đúng việc (JITAI), bám outcome đời thật, đẩy gói năm để không phụ thuộc daily active.</p></div>
+      <div class="card p-6 reveal"><h3 class="font-semibold mb-2 accent">Chống #7</h3><p class="text-muted text-sm">Weekly thay vì spam daily, user chỉnh tần suất, "ngày tốt" không phạt. Ít mà đúng hơn nhiều mà phiền.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="py-24 bg-alt">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="reveal max-w-2xl mb-10">
+      <div class="eyebrow">Giá &amp; Doanh thu</div>
+      <h2 class="text-4xl md:text-5xl mb-4">Freemium đơn giản. <span class="accent">Đẩy gói năm.</span></h2>
+      <p class="text-muted text-lg">Đòn bẩy thật là retention × conversion, không phải install.</p>
+    </div>
+
+    <div class="flex justify-center mb-10 reveal">
+      <div class="inline-flex p-1 rounded-full toggle-wrap">
+        <span id="tg-month" class="toggle-btn active" onclick="setBilling('month')">Hàng tháng</span>
+        <span id="tg-year" class="toggle-btn" onclick="setBilling('year')">Hàng năm −33%</span>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 mb-14">
+      <div class="card p-8 reveal">
+        <div class="text-sm text-muted font-semibold mb-2">Free</div>
+        <div class="text-4xl font-extrabold mb-1 text-white">0₫</div>
+        <div class="text-muted text-sm mb-6">Bắt đầu ngay</div>
+        <ul class="text-muted text-sm space-y-2.5 mb-7">
+          <li>✓ Thống kê cơ bản</li>
+          <li>✓ 1 mục tiêu</li>
+          <li>✓ Thông báo giới hạn</li>
+        </ul>
+        <a href="#" class="btn-secondary w-full text-center block">Tải về</a>
+      </div>
+      <div class="card p-8 reveal relative" style="border-color:var(--accent);box-shadow:0 24px 60px -28px rgba(105,236,191,0.4)">
+        <span class="absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-3 py-1 rounded-full" style="background:var(--accent);color:var(--accent-ink)">Phổ biến</span>
+        <div class="text-sm accent font-semibold mb-2">Premium</div>
+        <div class="text-4xl font-extrabold mb-1 text-white"><span id="price">$4.99</span><span class="text-base text-muted font-medium" id="period">/tháng</span></div>
+        <div class="text-muted text-sm mb-6" id="price-note">Linh hoạt hàng tháng</div>
+        <ul class="text-muted text-sm space-y-2.5 mb-7">
+          <li>✓ Nhiều mục tiêu + AI reflection sâu</li>
+          <li>✓ Thông báo thông minh đầy đủ</li>
+          <li>✓ History dài + Stress → Plan</li>
+          <li>✓ Digital Wrapped</li>
+        </ul>
+        <a href="#" class="btn-primary w-full text-center block">Dùng thử</a>
+      </div>
+      <div class="card p-8 reveal">
+        <div class="text-sm text-muted font-semibold mb-2">Teams (B2B2C)</div>
+        <div class="text-4xl font-extrabold mb-1 text-white">Liên hệ</div>
+        <div class="text-muted text-sm mb-6">Employee wellbeing</div>
+        <ul class="text-muted text-sm space-y-2.5 mb-7">
+          <li>✓ Dashboard tổng hợp (ẩn danh)</li>
+          <li>✓ ARPU cao hơn</li>
+          <li>✓ Triển khai theo công ty</li>
+        </ul>
+        <a href="#" class="btn-secondary w-full text-center block">Liên hệ</a>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-8 items-start reveal">
+      <div class="card p-7">
+        <h3 class="text-lg mb-1">ARR theo kịch bản</h3>
+        <p class="text-muted text-xs mb-4">Giả định: ARPPU ~$38–45/năm · conversion 3–5% · log scale</p>
+        <canvas id="revenueChart" height="240"></canvas>
+      </div>
+      <div>
+        <div class="card p-2 mb-5">
+          <div class="scroll-x">
+            <table class="tbl">
+              <thead><tr><th>Kịch bản</th><th>Active</th><th>Conv.</th><th>ARR</th></tr></thead>
+              <tbody>
+                <tr><td>Conservative (năm 1–2)</td><td>50k</td><td>3%</td><td class="warn">~$52k</td></tr>
+                <tr><td>Base (năm 2–3)</td><td>500k</td><td>4%</td><td class="yes">~$800k</td></tr>
+                <tr><td>Optimistic (năm 3–4)</td><td>3M</td><td>5%</td><td class="yes">~$6.7M</td></tr>
+                <tr><td>Breakout (hiếm)</td><td>20M+</td><td>5%</td><td class="yes">~$45M+</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card p-5">
+          <div class="text-sm font-semibold mb-1 text-white">Đòn bẩy</div>
+          <p class="text-muted text-sm">Conversion 3%→5% = <strong class="text-white">+67% doanh thu</strong> cùng lượng user. Phụ thu: lifetime unlock, B2B2C. <strong class="text-white">Không bán data.</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap" class="py-24">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="reveal max-w-2xl mb-14">
+      <div class="eyebrow">Roadmap</div>
+      <h2 class="text-4xl md:text-5xl mb-4"><span class="accent">Validate trước</span>, build sau.</h2>
+    </div>
+    <div class="grid md:grid-cols-4 gap-6">
+      <div class="card p-6 reveal"><div class="text-sm font-semibold accent mb-2">Bước 0 · 2 tuần</div><h3 class="text-lg mb-2">Validate</h3><p class="text-muted text-sm">Prototype thô + thông báo, thử 20 người. Hỏi: thống kê + thông báo có làm đổi hành vi thật?</p></div>
+      <div class="card p-6 reveal"><div class="text-sm font-semibold accent mb-2">v1 · MVP</div><h3 class="text-lg mb-2">1 mục tiêu</h3><p class="text-muted text-sm">Thống kê + thông báo tính toán + progress 7 ngày. Rule-based.</p></div>
+      <div class="card p-6 reveal"><div class="text-sm font-semibold accent mb-2">v1.5</div><h3 class="text-lg mb-2">AI on-device</h3><p class="text-muted text-sm">Insight tự nhiên, Stress → Plan, song song iOS + Android.</p></div>
+      <div class="card p-6 reveal"><div class="text-sm font-semibold accent mb-2">v2</div><h3 class="text-lg mb-2">Adaptive + Growth</h3><p class="text-muted text-sm">JITAI tự điều chỉnh, free-text, Digital Wrapped viral, B2B2C.</p></div>
+    </div>
+    <div class="card p-7 mt-8 reveal" style="border-color:rgba(105,236,191,0.4);background:rgba(105,236,191,0.05)">
+      <div class="text-sm font-semibold mb-2 accent">Narrative gọi vốn</div>
+      <p class="text-lg text-white">"Attention là tài nguyên khan hiếm nhất. Mindra xây behavioral layer hiểu mối quan hệ người–máy và thông báo đúng khoảnh khắc — on-device, private. Tầng dữ liệu Apple/Google có nhưng mâu thuẫn lợi ích nên không dùng để phục vụ user."</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="py-24 bg-alt">
+  <div class="max-w-3xl mx-auto px-6">
+    <div class="reveal mb-10 text-center">
+      <div class="eyebrow" style="justify-content:center">FAQ</div>
+      <h2 class="text-4xl md:text-5xl">Câu hỏi thường gặp</h2>
+    </div>
+    <div class="reveal">
+      <details><summary>Mindra có chặn app của tôi không?</summary><p class="text-muted text-sm pb-5">Không. Mindra chỉ thống kê và gửi thông báo tính toán cho bạn — bạn tự quyết. Không chặn cứng, không ép buộc.</p></details>
+      <details><summary>Dữ liệu của tôi có bị gửi đi đâu không?</summary><p class="text-muted text-sm pb-5">Không. Xử lý hoàn toàn on-device (AI chạy ngay trên máy). Data không rời máy, không bán, không share bên thứ ba. Đồng bộ mặc định tắt.</p></details>
+      <details><summary>iOS có làm được như Android không?</summary><p class="text-muted text-sm pb-5">Có, cho use case này. Vì không chặn + không cần server, iOS dùng App Group + AI on-device để thống kê và gửi local notification — tương đương Android. Android chỉ mịn hơn ở timestamp từng lần mở.</p></details>
+      <details><summary>Vì sao cần Mindra khi OS đã có Screen Time miễn phí?</summary><p class="text-muted text-sm pb-5">OS kiếm tiền từ attention nên không thật lòng giúp bạn dùng ít. Mindra đứng về phía bạn: thông báo đúng lúc + JITAI + AI hiểu bạn dần, thay vì biểu đồ tĩnh.</p></details>
+      <details><summary>Mindra có chẩn đoán tâm lý không?</summary><p class="text-muted text-sm pb-5">Không. Mindra là công cụ wellness/phản chiếu hành vi số. Dùng ngôn ngữ giả thuyết ("có vẻ..."), không chẩn đoán hay điều trị y tế.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="py-20">
+  <div class="glow glow-soft" style="bottom:-150px;left:40%;"></div>
+  <div class="max-w-4xl mx-auto px-6 text-center reveal relative z-10">
+    <div class="flex items-center justify-center gap-2 mb-6">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center font-extrabold text-lg" style="background:var(--accent);color:var(--accent-ink)">M</div>
+      <span class="font-bold text-2xl">Mindra</span>
+    </div>
+    <h2 class="text-3xl md:text-4xl mb-4">Không phải tracker. Là <span class="accent">digital agency</span> cho con người.</h2>
+    <p class="text-muted max-w-xl mx-auto mb-8">Thống kê hành vi số, thông báo nhẹ nhàng, giúp bạn giành lại quyền chủ động — không chặn, không phán xét.</p>
+    <div class="flex flex-wrap gap-3 justify-center">
+      <a href="#flow" class="btn-primary">Xem demo</a>
+      <a href="index.html" class="btn-secondary">← Xem pitch Wandr</a>
+    </div>
+    <p class="text-muted text-xs mt-10 max-w-xl mx-auto opacity-70">⚠ Mindra là công cụ wellness/phản chiếu hành vi số, không phải tư vấn hay điều trị y tế. Tài liệu pitch nội bộ · số liệu là mô hình minh họa.</p>
+  </div>
+</footer>
+
+<script>
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const iconOpen = document.getElementById('menu-icon-open');
+  const iconClose = document.getElementById('menu-icon-close');
+  btn.addEventListener('click', () => {
+    const open = menu.style.display === 'block';
+    menu.style.display = open ? 'none' : 'block';
+    btn.setAttribute('aria-expanded', String(!open));
+    iconOpen.style.display = open ? 'block' : 'none';
+    iconClose.style.display = open ? 'none' : 'block';
+  });
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    menu.style.display = 'none'; btn.setAttribute('aria-expanded','false');
+    iconOpen.style.display = 'block'; iconClose.style.display = 'none';
+  }));
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // goal selection
+  const goalCount = document.getElementById('goal-count');
+  document.querySelectorAll('.goal-card').forEach(c => c.addEventListener('click', () => {
+    c.classList.toggle('selected');
+    if (goalCount) goalCount.textContent = document.querySelectorAll('.goal-card.selected').length;
+  }));
+
+  function setBilling(mode){
+    const m = document.getElementById('tg-month'), y = document.getElementById('tg-year');
+    const price = document.getElementById('price'), period = document.getElementById('period'), note = document.getElementById('price-note');
+    if(mode==='year'){ y.classList.add('active'); m.classList.remove('active'); price.textContent='$39.99'; period.textContent='/năm'; note.textContent='Tiết kiệm 33% · ~$3.33/tháng'; }
+    else { m.classList.add('active'); y.classList.remove('active'); price.textContent='$4.99'; period.textContent='/tháng'; note.textContent='Linh hoạt hàng tháng'; }
+  }
+
+  Chart.defaults.color = 'rgba(244,247,245,0.64)';
+  Chart.defaults.font.family = 'Inter, sans-serif';
+  const grid = 'rgba(244,247,245,0.12)';
+
+  new Chart(document.getElementById('marketChart'), {
+    type: 'line',
+    data: { labels:['2022','2023','2024','2025','2026','2027','2028'],
+      datasets:[{ label:'$B', data:[4.9,5.7,7.0,8.1,9.3,10.7,12.3], borderColor:'#69ecbf',
+        backgroundColor:(ctx)=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,220);g.addColorStop(0,'rgba(105,236,191,0.3)');g.addColorStop(1,'rgba(105,236,191,0)');return g;},
+        fill:true, tension:0.4, pointRadius:3, pointBackgroundColor:'#69ecbf', borderWidth:2 }] },
+    options:{ plugins:{legend:{display:false}}, scales:{ x:{grid:{color:grid}}, y:{grid:{color:grid}, ticks:{callback:v=>'$'+v+'B'}} } }
+  });
+
+  new Chart(document.getElementById('revenueChart'), {
+    type:'bar',
+    data:{ labels:['Conservative','Base','Optimistic','Breakout'],
+      datasets:[{ data:[52000,800000,6700000,45000000], backgroundColor:['#52525b','#69ecbf','#09bc8a','#cffce7'], borderRadius:8, maxBarThickness:70 }] },
+    options:{ plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>'$'+c.raw.toLocaleString()}}},
+      scales:{ x:{grid:{display:false}}, y:{type:'logarithmic', grid:{color:grid}, ticks:{callback:v=>{const n=Number(v); if(n>=1e6)return '$'+(n/1e6)+'M'; if(n>=1e3)return '$'+(n/1e3)+'k'; return '$'+n;}}} } }
+  });
+</script>
+</body>
+</html>

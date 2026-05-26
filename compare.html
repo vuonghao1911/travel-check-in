@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>So sánh · Wandr vs AI Speaking Coach</title>
+<meta name="description" content="So sánh chi tiết giữa Wandr (travel check-in) và AI Speaking Coach (học tiếng Anh) trên mọi khía cạnh." />
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #05060a;
+    --bg-soft: #0a0c14;
+    --accent: #7c5cff;
+    --accent-2: #22d3ee;
+    --accent-3: #f472b6;
+    --text: #e7e9ee;
+    --muted: #8a8fa3;
+    --border: rgba(255,255,255,0.08);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    overflow-x: hidden;
+    max-width: 100vw;
+    line-height: 1.6;
+  }
+  section, footer { overflow-x: clip; }
+  h1, h2, h3, h4, .display { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em; }
+
+  /* Grain */
+  .grain {
+    position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+  }
+
+  /* Glow */
+  .glow {
+    position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.4; pointer-events: none; z-index: 0;
+  }
+  .glow-purple { width: 600px; height: 600px; background: #7c5cff; }
+  .glow-cyan { width: 500px; height: 500px; background: #22d3ee; }
+  .glow-pink { width: 400px; height: 400px; background: #f472b6; }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, #fff 0%, #c4b5fd 30%, #7c5cff 60%, #22d3ee 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .gradient-text-wandr {
+    background: linear-gradient(135deg, #c4b5fd, #7c5cff, #22d3ee);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .gradient-text-coach {
+    background: linear-gradient(135deg, #fbbf24, #f472b6, #ec4899);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  /* Card */
+  .card {
+    position: relative;
+    background: linear-gradient(180deg, rgba(20,22,32,0.7), rgba(10,12,20,0.7));
+    border-radius: 24px;
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+  }
+  .card::before {
+    content: ''; position: absolute; inset: 0; padding: 1px; border-radius: 24px;
+    background: linear-gradient(135deg, rgba(124,92,255,0.3), transparent 40%, transparent 60%, rgba(34,211,238,0.3));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+  }
+  .card-wandr::before {
+    background: linear-gradient(135deg, rgba(124,92,255,0.5), transparent 40%, transparent 60%, rgba(34,211,238,0.4));
+  }
+  .card-coach::before {
+    background: linear-gradient(135deg, rgba(251,191,36,0.5), transparent 40%, transparent 60%, rgba(244,114,182,0.4));
+  }
+
+  /* Chips */
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 999px;
+    background: rgba(124,92,255,0.1);
+    border: 1px solid rgba(124,92,255,0.25);
+    font-size: 13px; color: #c4b5fd; font-weight: 500;
+  }
+  .chip-pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: #22d3ee; box-shadow: 0 0 12px #22d3ee; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* Buttons */
+  .btn-primary {
+    background: linear-gradient(135deg, #7c5cff, #5b3df0);
+    color: #fff; font-weight: 600; padding: 14px 28px; border-radius: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 10px 40px -10px rgba(124,92,255,0.6);
+    display: inline-block;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 50px -10px rgba(124,92,255,0.7); }
+  .btn-secondary {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    color: #fff; font-weight: 500; padding: 14px 28px; border-radius: 12px;
+    transition: background 0.2s; display: inline-block;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.08); }
+
+  /* Nav */
+  nav.top {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    backdrop-filter: blur(20px);
+    background: rgba(5,6,10,0.6);
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Compare table */
+  .compare-table { width: 100%; border-collapse: collapse; }
+  .compare-table th, .compare-table td {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    text-align: left; font-size: 14px;
+  }
+  .compare-table thead th {
+    background: rgba(124,92,255,0.05);
+    color: var(--muted); font-weight: 500; font-size: 12px; text-transform: uppercase;
+    letter-spacing: 0.1em; padding-top: 18px; padding-bottom: 18px;
+  }
+  .compare-table thead th.col-wandr { color: #c4b5fd; background: rgba(124,92,255,0.08); }
+  .compare-table thead th.col-coach { color: #fcd34d; background: rgba(251,191,36,0.08); }
+  .compare-table tbody td.col-wandr { background: rgba(124,92,255,0.03); }
+  .compare-table tbody td.col-coach { background: rgba(251,191,36,0.03); }
+  .compare-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+  .compare-table tbody tr:hover td.col-wandr { background: rgba(124,92,255,0.06); }
+  .compare-table tbody tr:hover td.col-coach { background: rgba(251,191,36,0.06); }
+  .category-row td { font-weight: 700; color: var(--accent); background: rgba(124,92,255,0.05) !important; padding-top: 24px; }
+  .num-positive { color: #34d399; font-weight: 600; }
+  .num-warn { color: #fbbf24; font-weight: 600; }
+  .num-negative { color: #f87171; font-weight: 600; }
+
+  /* Score bar */
+  .score-bar { height: 8px; border-radius: 4px; background: rgba(255,255,255,0.06); overflow: hidden; position: relative; }
+  .score-fill { height: 100%; border-radius: 4px; }
+  .score-fill-wandr { background: linear-gradient(90deg, #7c5cff, #22d3ee); }
+  .score-fill-coach { background: linear-gradient(90deg, #fbbf24, #f472b6); }
+
+  /* Big stat */
+  .stat-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(36px, 5vw, 56px); font-weight: 700; line-height: 1;
+  }
+
+  /* Section eyebrow */
+  .eyebrow {
+    color: var(--accent); font-weight: 600; font-size: 13px;
+    letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px;
+  }
+
+  /* VS divider */
+  .vs-divider {
+    display: flex; align-items: center; justify-content: center;
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(124,92,255,0.2), rgba(251,191,36,0.2));
+    border: 1px solid rgba(255,255,255,0.1);
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 24px;
+    color: #fff; margin: 0 auto;
+    box-shadow: 0 0 40px rgba(124,92,255,0.3);
+  }
+
+  /* Reveal */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s, transform 0.8s; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Verdict winner badge */
+  .winner-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, rgba(52,211,153,0.2), rgba(34,211,238,0.15));
+    color: #34d399; font-size: 11px; font-weight: 700;
+    padding: 4px 10px; border-radius: 999px;
+    border: 1px solid rgba(52,211,153,0.3);
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .runner-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.04);
+    color: var(--muted); font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.08);
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 767px) {
+    .py-32 { padding-top: 4rem !important; padding-bottom: 4rem !important; }
+    .py-20 { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+    h1.text-5xl, h1.text-7xl, .md\:text-7xl { font-size: 2.25rem !important; line-height: 1.1 !important; }
+    h2.text-4xl, h2.text-5xl, .md\:text-5xl { font-size: 1.875rem !important; line-height: 1.15 !important; }
+    .compare-table th, .compare-table td { padding: 10px 12px !important; font-size: 12px !important; }
+    .compare-table { min-width: 600px; }
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .vs-divider { width: 56px; height: 56px; font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- NAV -->
+<nav class="top">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-cyan-400 flex items-center justify-center font-bold">⚖️</div>
+      <span class="font-semibold text-lg">So Sánh Dự Án</span>
+    </div>
+    <div class="hidden md:flex items-center gap-5 text-sm text-gray-400">
+      <a href="#overview" class="hover:text-white">Tổng quan</a>
+      <a href="#detailed" class="hover:text-white">Chi tiết</a>
+      <a href="#scoring" class="hover:text-white">Chấm điểm</a>
+      <a href="#market-deep" class="hover:text-white">Thị trường</a>
+      <a href="#pressure" class="hover:text-white">Áp lực</a>
+      <a href="#verdict" class="hover:text-white">Khuyến nghị</a>
+    </div>
+    <a href="index.html" class="btn-secondary text-sm" style="padding: 8px 16px;">← Wandr Deck</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="relative min-h-screen flex items-center pt-32 pb-20">
+  <div class="glow glow-purple" style="top: -100px; left: -100px;"></div>
+  <div class="glow glow-pink" style="bottom: 0; right: -100px; opacity: 0.3;"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10 w-full">
+    <div class="text-center max-w-4xl mx-auto reveal">
+      <span class="chip mb-6"><span class="chip-pulse-dot"></span>Báo cáo so sánh · Tháng 5/2026</span>
+      <h1 class="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+        <span class="gradient-text-wandr">Wandr</span> vs <span class="gradient-text-coach">AI Speaking Coach</span>
+      </h1>
+      <p class="text-xl text-gray-300 mb-4 max-w-2xl mx-auto">Cái nào nên làm năm 2026?</p>
+      <p class="text-base text-gray-400 mb-12 max-w-2xl mx-auto">Phân tích đa khía cạnh: thị trường, rủi ro, chi phí, doanh thu, mức độ tiếp cận, thời gian, đối thủ. Kết luận khuyến nghị cuối.</p>
+      <div class="flex flex-wrap justify-center gap-4 mb-16">
+        <a href="#detailed" class="btn-primary">Xem chi tiết so sánh</a>
+        <a href="#verdict" class="btn-secondary">Đi đến khuyến nghị</a>
+      </div>
+
+      <!-- Top-line score -->
+      <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div class="card card-wandr p-6 text-left reveal">
+          <div class="flex items-center justify-between mb-3">
+            <div class="text-xs text-purple-300 font-semibold uppercase tracking-wider">Dự án A</div>
+            <span class="runner-badge">Á quân</span>
+          </div>
+          <div class="text-2xl font-bold mb-2 gradient-text-wandr">Wandr</div>
+          <div class="text-sm text-gray-400 mb-4">Travel check-in · Bản đồ du lịch thật cho Gen Z</div>
+          <div class="stat-num gradient-text-wandr mb-2">81<span class="text-2xl text-gray-500">/120</span></div>
+          <div class="score-bar"><div class="score-fill score-fill-wandr" style="width: 67.5%;"></div></div>
+          <div class="text-xs text-gray-500 mt-2">Tổng điểm 12 tiêu chí</div>
+        </div>
+        <div class="card card-coach p-6 text-left reveal" style="box-shadow: 0 20px 60px -20px rgba(251,191,36,0.3);">
+          <div class="flex items-center justify-between mb-3">
+            <div class="text-xs text-yellow-300 font-semibold uppercase tracking-wider">Dự án B</div>
+            <span class="winner-badge">🏆 Quán quân</span>
+          </div>
+          <div class="text-2xl font-bold mb-2 gradient-text-coach">AI Speaking Coach</div>
+          <div class="text-sm text-gray-400 mb-4">Học tiếng Anh · AI luyện giao tiếp 24/7</div>
+          <div class="stat-num gradient-text-coach mb-2">91<span class="text-2xl text-gray-500">/120</span></div>
+          <div class="score-bar"><div class="score-fill score-fill-coach" style="width: 76%;"></div></div>
+          <div class="text-xs text-gray-500 mt-2">Tổng điểm 12 tiêu chí</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OVERVIEW SIDE-BY-SIDE -->
+<section id="overview" class="py-32 relative">
+  <div class="glow glow-cyan" style="top: 20%; left: 30%; opacity: 0.2;"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+      <div class="eyebrow">Tổng quan</div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">Hai dự án · <span class="gradient-text">Hai hướng đi</span></h2>
+      <p class="text-gray-400 text-lg">Mỗi dự án có DNA riêng. Chọn phải hợp với điểm mạnh founder + bối cảnh vốn + thị trường.</p>
+    </div>
+
+    <div class="grid md:grid-cols-[1fr_auto_1fr] gap-6 items-stretch">
+      <!-- WANDR CARD -->
+      <div class="card card-wandr p-8 reveal">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl font-bold" style="background: linear-gradient(135deg, #7c5cff, #22d3ee);">W</div>
+          <div>
+            <div class="font-bold text-xl">Wandr</div>
+            <div class="text-xs text-gray-500">Travel check-in</div>
+          </div>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">Bản đồ du lịch thật cho Gen Z</h3>
+        <p class="text-sm text-gray-400 mb-6">Google Maps + Instagram + BeReal hybrid. Mọi check-in có GPS xác thực + chụp trong app. Ưu tiên bản đồ, thời gian thực, siêu địa phương.</p>
+
+        <div class="space-y-3 mb-6">
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400">Thị trường VN</span>
+            <strong>28M Gen Z</strong>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400">Vốn pre-seed cần</span>
+            <strong>$300-500k</strong>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400">Chi phí infra/MAU</span>
+            <strong>$0.5-1</strong>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400">ARR năm 3 dự phóng</span>
+            <strong class="text-purple-300">$2.4M</strong>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400">Thời gian tới user ổn định</span>
+            <strong>18-24 tháng</strong>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400">Cạnh tranh trực tiếp</span>
+            <strong class="text-green-400">Không có (blue ocean)</strong>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl mb-4" style="background: rgba(124,92,255,0.08); border: 1px solid rgba(124,92,255,0.2);">
+          <div class="text-xs text-purple-300 font-semibold uppercase tracking-wider mb-2">💪 Điểm mạnh</div>
+          <ul class="text-sm text-gray-300 space-y-1">
+            <li>• Blue ocean — chưa ai làm hybrid</li>
+            <li>• Cost burn thấp 5-10x</li>
+            <li>• Network effect mạnh (creator + check-in)</li>
+            <li>• Window timing AI flood 2026 chính xác</li>
+          </ul>
+        </div>
+
+        <div class="p-4 rounded-xl" style="background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2);">
+          <div class="text-xs text-red-300 font-semibold uppercase tracking-wider mb-2">⚠️ Điểm yếu</div>
+          <ul class="text-sm text-gray-300 space-y-1">
+            <li>• Cold start 90% likelihood</li>
+            <li>• Cần xây supply (creator) trước demand</li>
+            <li>• Mùa du lịch → cash flow biến động</li>
+            <li>• Không có policy backing</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- VS DIVIDER -->
+      <div class="hidden md:flex flex-col items-center justify-center">
+        <div class="vs-divider">VS</div>
+      </div>
+
+      <!-- COACH CARD -->
+      <div class="card card-coach p-8 reveal">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #fbbf24, #f472b6);">🎓</div>
+          <div>
+            <div class="font-bold text-xl">AI Speaking Coach</div>
+            <div class="text-xs text-gray-500">EdTech · Học tiếng Anh AI</div>
+          </div>
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">AI English Speaking Infrastructure for Vietnam</h3>
+        <p class="text-sm text-gray-400 mb-6">Nền tảng AI luyện giao tiếp tiếng Anh 24/7. Conversation realtime + chấm phát âm + cá nhân hóa theo trình độ. Giải pháp cho khoảng trống lớn nhất giáo dục VN.</p>
+
+        <div class="space-y-3 mb-6">
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400">Thị trường VN</span>
+            <strong>50M+ người học</strong>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400">Vốn pre-seed cần</span>
+            <strong>$500k-1M</strong>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400">Chi phí infra/MAU</span>
+            <strong class="text-yellow-400">$3-8</strong>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400">ARR năm 3 dự phóng</span>
+            <strong class="text-yellow-300">$3-5M</strong>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400">Thời gian tới user ổn định</span>
+            <strong>15-20 tháng</strong>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400">Cạnh tranh trực tiếp</span>
+            <strong class="text-red-400">ELSA, Duolingo, OpenAI</strong>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl mb-4" style="background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.25);">
+          <div class="text-xs text-yellow-300 font-semibold uppercase tracking-wider mb-2">💪 Điểm mạnh</div>
+          <ul class="text-sm text-gray-300 space-y-1">
+            <li>• Đề án 2371 chính phủ 20 năm</li>
+            <li>• ARPU cao 3-4x ($10-30/tháng)</li>
+            <li>• B2B school + enterprise đường vào rõ</li>
+            <li>• AI 2024+ enabling tech mới sẵn</li>
+          </ul>
+        </div>
+
+        <div class="p-4 rounded-xl" style="background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2);">
+          <div class="text-xs text-red-300 font-semibold uppercase tracking-wider mb-2">⚠️ Điểm yếu</div>
+          <ul class="text-sm text-gray-300 space-y-1">
+            <li>• ELSA $50M raised, dataset 5 năm</li>
+            <li>• AI cost runaway ($3-8/MAU)</li>
+            <li>• OpenAI/Google voice free competitor</li>
+            <li>• Voice dataset VN chicken-egg</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DETAILED COMPARISON TABLE -->
+<section id="detailed" class="py-32 relative">
+  <div class="glow glow-purple" style="bottom: 10%; right: 20%; opacity: 0.2;"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+      <div class="eyebrow">So sánh chi tiết</div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">12 tiêu chí · <span class="gradient-text">Bảng đối chiếu</span></h2>
+      <p class="text-gray-400 text-lg">Mỗi tiêu chí có winner riêng. Tổng hợp cuối để ra khuyến nghị.</p>
+    </div>
+
+    <div class="card p-2 reveal">
+      <div class="table-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th style="width: 25%;">Tiêu chí</th>
+              <th class="col-wandr" style="width: 35%;">Wandr (Travel)</th>
+              <th class="col-coach" style="width: 35%;">AI Speaking Coach</th>
+              <th style="width: 5%;">Winner</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="category-row"><td colspan="4">📊 THỊ TRƯỜNG</td></tr>
+            <tr>
+              <td><strong>TAM toàn cầu</strong></td>
+              <td class="col-wandr">$184B (travel social)</td>
+              <td class="col-coach">$400B (EdTech TG)</td>
+              <td class="num-warn">Coach</td>
+            </tr>
+            <tr>
+              <td><strong>SAM Đông Nam Á</strong></td>
+              <td class="col-wandr">$25B</td>
+              <td class="col-coach">$5B (EdTech VN)</td>
+              <td class="num-positive">Wandr</td>
+            </tr>
+            <tr>
+              <td><strong>Số người chịu pain VN</strong></td>
+              <td class="col-wandr">28M Gen Z</td>
+              <td class="col-coach"><strong class="num-positive">50M+ toàn dân</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+            <tr>
+              <td><strong>Tăng trưởng niche</strong></td>
+              <td class="col-wandr">+24% YoY (du lịch VN)</td>
+              <td class="col-coach">CAGR 12.11%/năm tới 2033</td>
+              <td class="num-positive">Wandr</td>
+            </tr>
+
+            <tr class="category-row"><td colspan="4">⚡ TÍNH CẤP THIẾT</td></tr>
+            <tr>
+              <td><strong>Policy backing</strong></td>
+              <td class="col-wandr">Không</td>
+              <td class="col-coach"><strong class="num-positive">Đề án 2371 (2025-2045)</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+            <tr>
+              <td><strong>Pain age</strong></td>
+              <td class="col-wandr">3-5 năm (đang tăng)</td>
+              <td class="col-coach">30 năm</td>
+              <td class="num-positive">Wandr (newer + accel)</td>
+            </tr>
+            <tr>
+              <td><strong>Đường cong pain</strong></td>
+              <td class="col-wandr"><strong class="num-positive">Tăng dốc (AI flood)</strong></td>
+              <td class="col-coach">Bão hoà + leo lại với policy</td>
+              <td class="num-positive">Wandr</td>
+            </tr>
+
+            <tr class="category-row"><td colspan="4">💰 KINH TẾ</td></tr>
+            <tr>
+              <td><strong>Vốn pre-seed</strong></td>
+              <td class="col-wandr"><strong class="num-positive">$300-500k</strong></td>
+              <td class="col-coach">$500k-1M</td>
+              <td class="num-positive">Wandr</td>
+            </tr>
+            <tr>
+              <td><strong>Cost/MAU</strong></td>
+              <td class="col-wandr"><strong class="num-positive">$0.5-1</strong></td>
+              <td class="col-coach">$3-8 (AI burn)</td>
+              <td class="num-positive">Wandr</td>
+            </tr>
+            <tr>
+              <td><strong>ARPU năm 3</strong></td>
+              <td class="col-wandr">$1.60</td>
+              <td class="col-coach"><strong class="num-positive">$4-8</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+            <tr>
+              <td><strong>ARR năm 3</strong></td>
+              <td class="col-wandr">$2.4M</td>
+              <td class="col-coach"><strong class="num-positive">$3-5M</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+            <tr>
+              <td><strong>Phụ thuộc quảng cáo</strong></td>
+              <td class="col-wandr">35% revenue</td>
+              <td class="col-coach"><strong class="num-positive">Thấp (subscription)</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+
+            <tr class="category-row"><td colspan="4">🎯 ĐỐI THỦ</td></tr>
+            <tr>
+              <td><strong>Đối thủ trực tiếp VN</strong></td>
+              <td class="col-wandr"><strong class="num-positive">Không có (blue ocean)</strong></td>
+              <td class="col-coach">ELSA $50M, Duolingo, Edmicro</td>
+              <td class="num-positive">Wandr</td>
+            </tr>
+            <tr>
+              <td><strong>Big tech threat</strong></td>
+              <td class="col-wandr">Cao (Google/TikTok/Xiaohongshu)</td>
+              <td class="col-coach"><strong class="num-negative">Rất cao (OpenAI Voice)</strong></td>
+              <td class="num-positive">Wandr</td>
+            </tr>
+            <tr>
+              <td><strong>Khoảng trống thị trường</strong></td>
+              <td class="col-wandr"><strong class="num-positive">~70%</strong></td>
+              <td class="col-coach">~30%</td>
+              <td class="num-positive">Wandr</td>
+            </tr>
+
+            <tr class="category-row"><td colspan="4">⏱ THỜI GIAN</td></tr>
+            <tr>
+              <td><strong>MVP launch</strong></td>
+              <td class="col-wandr">M3-4</td>
+              <td class="col-coach">M4-6</td>
+              <td class="num-positive">Wandr</td>
+            </tr>
+            <tr>
+              <td><strong>First revenue</strong></td>
+              <td class="col-wandr">M9-12</td>
+              <td class="col-coach"><strong class="num-positive">M3-6</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+            <tr>
+              <td><strong>User ổn định (D30 ≥ benchmark)</strong></td>
+              <td class="col-wandr">18-24 tháng</td>
+              <td class="col-coach"><strong class="num-positive">15-20 tháng</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+            <tr>
+              <td><strong>$100k MRR</strong></td>
+              <td class="col-wandr">M30-36 (Y3 đầu)</td>
+              <td class="col-coach"><strong class="num-positive">M20-26 (Y2 giữa)</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+
+            <tr class="category-row"><td colspan="4">🛡️ MOAT</td></tr>
+            <tr>
+              <td><strong>Data moat</strong></td>
+              <td class="col-wandr">Verified visit data + creator graph</td>
+              <td class="col-coach"><strong class="num-positive">Voice dataset VN + accent</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+            <tr>
+              <td><strong>Network effect</strong></td>
+              <td class="col-wandr"><strong class="num-positive">Mạnh (social discovery)</strong></td>
+              <td class="col-coach">Yếu (học cá nhân)</td>
+              <td class="num-positive">Wandr</td>
+            </tr>
+            <tr>
+              <td><strong>Switch cost user</strong></td>
+              <td class="col-wandr">Trung bình</td>
+              <td class="col-coach"><strong class="num-positive">Cao (learning history)</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+
+            <tr class="category-row"><td colspan="4">⚠️ RỦI RO</td></tr>
+            <tr>
+              <td><strong>Cold start risk</strong></td>
+              <td class="col-wandr"><strong class="num-negative">90% likelihood</strong></td>
+              <td class="col-coach">30% (audience sẵn)</td>
+              <td class="num-warn">Coach</td>
+            </tr>
+            <tr>
+              <td><strong>Tech complexity</strong></td>
+              <td class="col-wandr">Trung bình (GPS + map)</td>
+              <td class="col-coach"><strong class="num-negative">Cao (realtime voice AI)</strong></td>
+              <td class="num-positive">Wandr</td>
+            </tr>
+            <tr>
+              <td><strong>Founder burnout</strong></td>
+              <td class="col-wandr">Trung bình</td>
+              <td class="col-coach"><strong class="num-warn">Cao hơn</strong></td>
+              <td class="num-positive">Wandr</td>
+            </tr>
+            <tr>
+              <td><strong>Regulatory risk</strong></td>
+              <td class="col-wandr"><strong class="num-positive">Thấp (NĐ 13)</strong></td>
+              <td class="col-coach">Trung bình (content safety K12)</td>
+              <td class="num-positive">Wandr</td>
+            </tr>
+
+            <tr class="category-row"><td colspan="4">📡 GTM + ACQUISITION</td></tr>
+            <tr>
+              <td><strong>Organic distribution</strong></td>
+              <td class="col-wandr">Cần xây creator network</td>
+              <td class="col-coach"><strong class="num-positive">TikTok hashtag + trường học sẵn</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+            <tr>
+              <td><strong>B2B channel</strong></td>
+              <td class="col-wandr">Yếu (chuỗi quán)</td>
+              <td class="col-coach"><strong class="num-positive">Trường + công ty + Bộ GD</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+            <tr>
+              <td><strong>CAC ước</strong></td>
+              <td class="col-wandr"><strong class="num-positive">$1.50-3</strong></td>
+              <td class="col-coach">$2-5</td>
+              <td class="num-positive">Wandr</td>
+            </tr>
+
+            <tr class="category-row"><td colspan="4">🚪 EXIT POTENTIAL</td></tr>
+            <tr>
+              <td><strong>Acquirer ưu tiên</strong></td>
+              <td class="col-wandr">Klook, Traveloka, Xiaohongshu</td>
+              <td class="col-coach"><strong class="num-positive">Duolingo, FPT, Vingroup</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+            <tr>
+              <td><strong>Acquihire range năm 3</strong></td>
+              <td class="col-wandr">$40-80M</td>
+              <td class="col-coach"><strong class="num-positive">$50-150M</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+            <tr>
+              <td><strong>IPO potential</strong></td>
+              <td class="col-wandr">Khó</td>
+              <td class="col-coach"><strong class="num-positive">Cao (EdTech precedent)</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+
+            <tr class="category-row"><td colspan="4">💵 VỐN VC VN 2020-2025</td></tr>
+            <tr>
+              <td><strong>Tổng raised category</strong></td>
+              <td class="col-wandr">~$2M (travel-social)</td>
+              <td class="col-coach"><strong class="num-positive">~$280M (EdTech)</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+            <tr>
+              <td><strong>VC familiar</strong></td>
+              <td class="col-wandr">Khó pitch</td>
+              <td class="col-coach"><strong class="num-positive">Có precedent (Topica, ELSA)</strong></td>
+              <td class="num-warn">Coach</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="text-center mt-4 text-xs text-gray-500">← Cuộn ngang để xem đầy đủ trên mobile →</div>
+  </div>
+</section>
+
+<!-- SCORING BREAKDOWN -->
+<section id="scoring" class="py-32 relative">
+  <div class="glow glow-cyan" style="top: 30%; right: 10%; opacity: 0.2;"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+      <div class="eyebrow">Chấm điểm</div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">12 trục · <span class="gradient-text">Cho điểm từng bên</span></h2>
+      <p class="text-gray-400 text-lg">Mỗi trục 1-10. Tổng hợp ra điểm cuối cùng.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+      <!-- WANDR SCORES -->
+      <div class="card card-wandr p-6 reveal">
+        <div class="flex items-center justify-between mb-6">
+          <div class="font-bold text-xl gradient-text-wandr">Wandr</div>
+          <div class="text-3xl font-bold gradient-text-wandr">81/120</div>
+        </div>
+        <div class="space-y-3">
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Thị trường (size)</span><strong>10/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-wandr" style="width: 100%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Policy support</span><strong class="text-red-300">2/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-wandr" style="width: 20%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Audience size</span><strong>7/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-wandr" style="width: 70%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Use frequency</span><strong class="text-yellow-300">5/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-wandr" style="width: 50%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Cost efficiency</span><strong class="text-green-300">8/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-wandr" style="width: 80%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Doanh thu / ARPU</span><strong>6/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-wandr" style="width: 60%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Cạnh tranh thấp</span><strong class="text-green-300">9/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-wandr" style="width: 90%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Moat depth</span><strong>8/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-wandr" style="width: 80%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Risk profile</span><strong>6/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-wandr" style="width: 60%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Tech complexity OK</span><strong>7/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-wandr" style="width: 70%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Time-to-PMF</span><strong>6/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-wandr" style="width: 60%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Exit potential</span><strong>7/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-wandr" style="width: 70%;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COACH SCORES -->
+      <div class="card card-coach p-6 reveal">
+        <div class="flex items-center justify-between mb-6">
+          <div class="font-bold text-xl gradient-text-coach">AI Speaking Coach</div>
+          <div class="text-3xl font-bold gradient-text-coach">91/120</div>
+        </div>
+        <div class="space-y-3">
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Thị trường (size)</span><strong>8/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-coach" style="width: 80%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Policy support</span><strong class="text-green-300">10/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-coach" style="width: 100%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Audience size</span><strong class="text-green-300">9/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-coach" style="width: 90%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Use frequency</span><strong class="text-green-300">9/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-coach" style="width: 90%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Cost efficiency</span><strong class="text-yellow-300">5/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-coach" style="width: 50%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Doanh thu / ARPU</span><strong class="text-green-300">9/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-coach" style="width: 90%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Cạnh tranh thấp</span><strong class="text-red-300">5/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-coach" style="width: 50%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Moat depth</span><strong class="text-green-300">9/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-coach" style="width: 90%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Risk profile</span><strong>5/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-coach" style="width: 50%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Tech complexity OK</span><strong>5/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-coach" style="width: 50%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Time-to-PMF</span><strong>8/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-coach" style="width: 80%;"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Exit potential</span><strong class="text-green-300">9/10</strong></div>
+            <div class="score-bar"><div class="score-fill score-fill-coach" style="width: 90%;"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WINS BY CATEGORY -->
+    <div class="grid md:grid-cols-3 gap-4 mt-12 max-w-5xl mx-auto">
+      <div class="card p-5 reveal text-center">
+        <div class="text-xs text-purple-300 font-semibold uppercase tracking-wider mb-2">Wandr thắng ở</div>
+        <div class="text-2xl font-bold gradient-text-wandr">5/12</div>
+        <div class="text-xs text-gray-400 mt-2">tiêu chí: Cost, Cạnh tranh, Pain trajectory, Network effect, Regulatory</div>
+      </div>
+      <div class="card p-5 reveal text-center" style="border-color: rgba(251,191,36,0.3);">
+        <div class="text-xs text-yellow-300 font-semibold uppercase tracking-wider mb-2">Coach thắng ở</div>
+        <div class="text-2xl font-bold gradient-text-coach">7/12</div>
+        <div class="text-xs text-gray-400 mt-2">tiêu chí: Policy, Audience, Frequency, ARPU, Moat depth, Time-to-PMF, Exit</div>
+      </div>
+      <div class="card p-5 reveal text-center">
+        <div class="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-2">Chênh lệch</div>
+        <div class="text-2xl font-bold gradient-text">+10 điểm</div>
+        <div class="text-xs text-gray-400 mt-2">Coach lead với khoảng cách rõ (8.3% trên tổng 120)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET DEEP ANALYSIS -->
+<section id="market-deep" class="py-32 relative">
+  <div class="glow glow-purple" style="top: 10%; left: -100px; opacity: 0.25;"></div>
+  <div class="glow glow-cyan" style="bottom: 20%; right: -50px; opacity: 0.2;"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+      <div class="eyebrow">Phân tích thị trường sâu</div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">Bóc tách <span class="gradient-text">từng lớp thị trường</span></h2>
+      <p class="text-gray-400 text-lg">TAM/SAM không đủ. Cần biết sub-segment, tỉ lệ chiếm chỗ, headwind/tailwind cụ thể.</p>
+    </div>
+
+    <!-- WANDR DEEP -->
+    <div class="card card-wandr p-8 mb-8 reveal">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl font-bold" style="background: linear-gradient(135deg, #7c5cff, #22d3ee);">W</div>
+        <div>
+          <div class="font-bold text-xl gradient-text-wandr">Wandr · Thị trường travel discovery VN</div>
+          <div class="text-xs text-gray-500">Bóc tách 4 sub-segment + competitor capacity</div>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6 mb-6">
+        <div>
+          <div class="text-xs text-purple-300 font-semibold uppercase tracking-wider mb-3">📊 Sub-segment size VN 2026</div>
+          <div class="space-y-3">
+            <div class="p-3 rounded-lg" style="background: rgba(124,92,255,0.06); border: 1px solid rgba(124,92,255,0.15);">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-semibold">Travel discovery social</span>
+                <strong class="text-sm gradient-text-wandr">$1.2B</strong>
+              </div>
+              <div class="text-xs text-gray-400">Khám phá điểm + creator content du lịch. 0 incumbent VN.</div>
+            </div>
+            <div class="p-3 rounded-lg" style="background: rgba(124,92,255,0.04); border: 1px solid rgba(124,92,255,0.1);">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-semibold">F&B review/discovery</span>
+                <strong class="text-sm gradient-text-wandr">$800M</strong>
+              </div>
+              <div class="text-xs text-gray-400">Café, ăn uống, quán bar VN. Foody chết → khoảng trống.</div>
+            </div>
+            <div class="p-3 rounded-lg" style="background: rgba(124,92,255,0.04); border: 1px solid rgba(124,92,255,0.1);">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-semibold">Local commerce ads</span>
+                <strong class="text-sm gradient-text-wandr">$400M</strong>
+              </div>
+              <div class="text-xs text-gray-400">Quán/place trả sponsored. Đang chia Maps/Facebook.</div>
+            </div>
+            <div class="p-3 rounded-lg" style="background: rgba(124,92,255,0.04); border: 1px solid rgba(124,92,255,0.1);">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-semibold">Creator economy travel</span>
+                <strong class="text-sm gradient-text-wandr">$150M</strong>
+              </div>
+              <div class="text-xs text-gray-400">VN có 350k micro-creator. Mảng monetize travel chưa có nền tảng.</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="text-xs text-purple-300 font-semibold uppercase tracking-wider mb-3">🎯 Competitor capacity ăn được</div>
+          <div class="space-y-3">
+            <div class="p-3 rounded-lg" style="background: rgba(255,255,255,0.03);">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-semibold">Foody (Sea Group)</span>
+                <span class="num-negative text-xs">Bỏ rơi</span>
+              </div>
+              <div class="text-xs text-gray-400">App gần như chết từ 2023. Sea dồn vào Shopee. <strong class="text-green-300">→ Market share lấy lại được</strong></div>
+            </div>
+            <div class="p-3 rounded-lg" style="background: rgba(255,255,255,0.03);">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-semibold">Google Maps</span>
+                <span class="num-warn text-xs">Dominant nhưng yếu social</span>
+              </div>
+              <div class="text-xs text-gray-400">1B user nhưng không vibe/social/realtime. <strong class="text-green-300">→ Bổ sung, không thay thế</strong></div>
+            </div>
+            <div class="p-3 rounded-lg" style="background: rgba(255,255,255,0.03);">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-semibold">Klook / Traveloka</span>
+                <span class="num-warn text-xs">Booking, không discovery</span>
+              </div>
+              <div class="text-xs text-gray-400">Bán tour, không phải khám phá. <strong class="text-green-300">→ Đối tác tiềm năng affiliate</strong></div>
+            </div>
+            <div class="p-3 rounded-lg" style="background: rgba(255,255,255,0.03);">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-semibold">Xiaohongshu</span>
+                <span class="num-warn text-xs">Chưa vào SEA</span>
+              </div>
+              <div class="text-xs text-gray-400">300M MAU nhưng China-only đến 2027 (dự kiến). <strong class="text-yellow-300">→ Cửa 18-36 tháng</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="p-4 rounded-xl" style="background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.2);">
+          <div class="text-xs text-green-300 font-semibold uppercase tracking-wider mb-2">🌬️ Tailwinds 2026</div>
+          <ul class="text-sm text-gray-300 space-y-1">
+            <li>• AI flood → trust crisis → demand verified visit</li>
+            <li>• Post-Covid travel boom +24% YoY</li>
+            <li>• Gen Z VN smartphone 92% + 5G 75%</li>
+            <li>• Creator economy 350k micro-creator</li>
+            <li>• Foody chết → market share trống</li>
+          </ul>
+        </div>
+        <div class="p-4 rounded-xl" style="background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2);">
+          <div class="text-xs text-red-300 font-semibold uppercase tracking-wider mb-2">🌪️ Headwinds 2026</div>
+          <ul class="text-sm text-gray-300 space-y-1">
+            <li>• Behavior change khó (5 tab thói quen)</li>
+            <li>• Du lịch theo mùa → cash flow nhảy</li>
+            <li>• Mapbox cost tăng 40% từ 2024</li>
+            <li>• Big tech defensive launch khả thi</li>
+            <li>• VC VN ít quen travel-social</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- COACH DEEP -->
+    <div class="card card-coach p-8 reveal">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #fbbf24, #f472b6);">🎓</div>
+        <div>
+          <div class="font-bold text-xl gradient-text-coach">AI Speaking Coach · Thị trường EdTech VN</div>
+          <div class="text-xs text-gray-500">Bóc tách 4 sub-segment + competitor capacity</div>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6 mb-6">
+        <div>
+          <div class="text-xs text-yellow-300 font-semibold uppercase tracking-wider mb-3">📊 Sub-segment size VN 2026</div>
+          <div class="space-y-3">
+            <div class="p-3 rounded-lg" style="background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.15);">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-semibold">K12 speaking (mầm non–THPT)</span>
+                <strong class="text-sm gradient-text-coach">$80M</strong>
+              </div>
+              <div class="text-xs text-gray-400">Bộ GD push Đề án 2371. Trường ngân sách chi license. Sales cycle 6-12 tháng.</div>
+            </div>
+            <div class="p-3 rounded-lg" style="background: rgba(251,191,36,0.04); border: 1px solid rgba(251,191,36,0.1);">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-semibold">IELTS / SAT prep</span>
+                <strong class="text-sm gradient-text-coach">$50M</strong>
+              </div>
+              <div class="text-xs text-gray-400">DOL English đã chiếm phần lớn. AI speaking là feature complement.</div>
+            </div>
+            <div class="p-3 rounded-lg" style="background: rgba(251,191,36,0.04); border: 1px solid rgba(251,191,36,0.1);">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-semibold">Adult conversational</span>
+                <strong class="text-sm gradient-text-coach">$40M</strong>
+              </div>
+              <div class="text-xs text-gray-400">Người đi làm 22-40 tuổi. ELSA đã chiếm 60%. Switch cost trung bình.</div>
+            </div>
+            <div class="p-3 rounded-lg" style="background: rgba(251,191,36,0.04); border: 1px solid rgba(251,191,36,0.1);">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-semibold">Enterprise training</span>
+                <strong class="text-sm gradient-text-coach">$30M</strong>
+              </div>
+              <div class="text-xs text-gray-400">HR/L&D budget chi $50-200/employee/year. Sales doanh nghiệp lớn.</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="text-xs text-yellow-300 font-semibold uppercase tracking-wider mb-3">🎯 Competitor capacity</div>
+          <div class="space-y-3">
+            <div class="p-3 rounded-lg" style="background: rgba(255,255,255,0.03);">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-semibold">ELSA Speak</span>
+                <span class="num-negative text-xs">Dominant</span>
+              </div>
+              <div class="text-xs text-gray-400">$50M raised, 7M VN user, voice dataset 5 năm. <strong class="text-red-300">→ Cần niche khác hoặc đánh giá lại</strong></div>
+            </div>
+            <div class="p-3 rounded-lg" style="background: rgba(255,255,255,0.03);">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-semibold">Duolingo</span>
+                <span class="num-warn text-xs">Free dominance</span>
+              </div>
+              <div class="text-xs text-gray-400">10M+ VN user free. Speaking yếu, gamification mạnh. <strong class="text-yellow-300">→ Hợp tác hoặc tránh</strong></div>
+            </div>
+            <div class="p-3 rounded-lg" style="background: rgba(255,255,255,0.03);">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-semibold">OpenAI Voice / Gemini Live</span>
+                <span class="num-negative text-xs">Free Tier 1</span>
+              </div>
+              <div class="text-xs text-gray-400">ChatGPT Advanced Voice + Gemini Live free 2024. <strong class="text-red-300">→ Phải có VN-specific value rõ</strong></div>
+            </div>
+            <div class="p-3 rounded-lg" style="background: rgba(255,255,255,0.03);">
+              <div class="flex justify-between mb-1">
+                <span class="text-sm font-semibold">FPT, Vingroup, Topica</span>
+                <span class="num-warn text-xs">Local potential</span>
+              </div>
+              <div class="text-xs text-gray-400">Có thể launch AI English coach 12-24 tháng. <strong class="text-yellow-300">→ Cần move trước</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="p-4 rounded-xl" style="background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.2);">
+          <div class="text-xs text-green-300 font-semibold uppercase tracking-wider mb-2">🌬️ Tailwinds 2026</div>
+          <ul class="text-sm text-gray-300 space-y-1">
+            <li>• Đề án 2371 chính phủ 20 năm</li>
+            <li>• Realtime voice GPT-4o / Gemini Live cheap</li>
+            <li>• 50M người chịu pain — toàn dân</li>
+            <li>• B2B school + enterprise budget có sẵn</li>
+            <li>• VC EdTech VN raised $280M tiền lệ</li>
+          </ul>
+        </div>
+        <div class="p-4 rounded-xl" style="background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2);">
+          <div class="text-xs text-red-300 font-semibold uppercase tracking-wider mb-2">🌪️ Headwinds 2026</div>
+          <ul class="text-sm text-gray-300 space-y-1">
+            <li>• ELSA $50M dominance + voice dataset 5 năm</li>
+            <li>• AI cost $3-8/MAU burn nhanh</li>
+            <li>• OpenAI free competitor tier-1</li>
+            <li>• AI hallucination → reputation kill</li>
+            <li>• School sales cycle 6-12 tháng</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKET COMPARISON HIGHLIGHTS -->
+    <div class="mt-12 grid md:grid-cols-3 gap-4 reveal">
+      <div class="card p-5 text-center">
+        <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Khoảng trống dễ chiếm</div>
+        <div class="text-2xl font-bold gradient-text-wandr mb-2">Wandr ~70%</div>
+        <div class="text-2xl font-bold gradient-text-coach">Coach ~30%</div>
+        <div class="text-xs text-gray-400 mt-3">Wandr blue ocean nhưng cần xây từ 0. Coach red ocean nhưng có lateral entry.</div>
+      </div>
+      <div class="card p-5 text-center">
+        <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Sub-segment lớn nhất</div>
+        <div class="text-2xl font-bold gradient-text-wandr mb-2">$1.2B (travel discovery)</div>
+        <div class="text-2xl font-bold gradient-text-coach">$80M (K12 speaking)</div>
+        <div class="text-xs text-gray-400 mt-3">Wandr addressable lớn hơn nhưng khó monetize sớm. Coach K12 có B2B path rõ.</div>
+      </div>
+      <div class="card p-5 text-center">
+        <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Time to category leader</div>
+        <div class="text-2xl font-bold gradient-text-wandr mb-2">2-3 năm</div>
+        <div class="text-2xl font-bold gradient-text-coach">4-6 năm</div>
+        <div class="text-xs text-gray-400 mt-3">Wandr nhanh hơn vì không có incumbent. Coach phải đánh ELSA dài hạn.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRESSURE WHEN BUILDING -->
+<section id="pressure" class="py-32 relative">
+  <div class="glow glow-pink" style="top: 30%; left: 20%; opacity: 0.2;"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+      <div class="eyebrow">Áp lực khi làm app</div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">Mỗi dự án có <span class="gradient-text">áp lực riêng</span></h2>
+      <p class="text-gray-400 text-lg">Hiểu áp lực thực tế trước khi cam kết 3-5 năm cuộc đời.</p>
+    </div>
+
+    <!-- PRESSURE TIMELINE -->
+    <div class="grid md:grid-cols-3 gap-4 mb-12">
+      <div class="card p-6 reveal">
+        <div class="text-xs text-purple-300 font-semibold uppercase tracking-wider mb-3">⚡ Áp lực ngày-tuần</div>
+        <ul class="text-sm text-gray-300 space-y-2">
+          <li>• Cash flow tháng này có đủ trả lương?</li>
+          <li>• Bug production lúc 2h sáng</li>
+          <li>• User report 1-sao trên App Store</li>
+          <li>• Server downtime + AWS bill bất ngờ</li>
+          <li>• Co-founder bất đồng quyết định</li>
+          <li>• Slack thông báo dồn dập</li>
+        </ul>
+      </div>
+      <div class="card p-6 reveal">
+        <div class="text-xs text-cyan-300 font-semibold uppercase tracking-wider mb-3">📅 Áp lực tháng-quý</div>
+        <ul class="text-sm text-gray-300 space-y-2">
+          <li>• Miss milestone đã hứa với VC</li>
+          <li>• Hiring khó — không tìm được senior</li>
+          <li>• Đối thủ launch feature trước</li>
+          <li>• Update investor monthly không tốt</li>
+          <li>• Churn tăng — D30 sụt</li>
+          <li>• Cash runway còn 9 tháng</li>
+        </ul>
+      </div>
+      <div class="card p-6 reveal">
+        <div class="text-xs text-pink-300 font-semibold uppercase tracking-wider mb-3">🌑 Áp lực năm-dài hạn</div>
+        <ul class="text-sm text-gray-300 space-y-2">
+          <li>• Quyết định pivot hay tiếp tục?</li>
+          <li>• Cãi nhau co-founder lớn</li>
+          <li>• Team key nghỉ việc</li>
+          <li>• Vợ/chồng nói chuyện ly hôn</li>
+          <li>• Sức khoẻ — lưng, mắt, mental</li>
+          <li>• Opportunity cost $150-250k/3 năm</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- WANDR PRESSURES -->
+    <div class="card card-wandr p-8 mb-8 reveal">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl font-bold" style="background: linear-gradient(135deg, #7c5cff, #22d3ee);">W</div>
+        <div>
+          <div class="font-bold text-xl gradient-text-wandr">Áp lực đặc thù Wandr</div>
+          <div class="text-xs text-gray-500">5 cơn ác mộng đặc biệt cho travel check-in</div>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="p-4 rounded-xl" style="background: rgba(255,255,255,0.03);">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-2xl">❄️</span>
+            <strong class="text-sm">Cold start anxiety</strong>
+            <span class="text-xs text-red-400 ml-auto">M1-6</span>
+          </div>
+          <p class="text-xs text-gray-400">Mở app mỗi sáng kiểm tra MAU — nếu Đà Lạt chưa seed đủ creator → map trống → user uninstall → trên Slack mọi người căng. <strong class="text-white">90% likelihood</strong> theo benchmark consumer social.</p>
+        </div>
+        <div class="p-4 rounded-xl" style="background: rgba(255,255,255,0.03);">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-2xl">🏪</span>
+            <strong class="text-sm">Place data quality ops</strong>
+            <span class="text-xs text-yellow-400 ml-auto">M3+</span>
+          </div>
+          <p class="text-xs text-gray-400">80% quán Đà Lạt là cá nhân nhỏ. Owner không tech-savvy → profile sai → user mất tin cậy. <strong class="text-white">Cần CS team đi gõ cửa</strong> từng quán — không scale được.</p>
+        </div>
+        <div class="p-4 rounded-xl" style="background: rgba(255,255,255,0.03);">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-2xl">🎬</span>
+            <strong class="text-sm">Creator burnout sau M6</strong>
+            <span class="text-xs text-yellow-400 ml-auto">M6+</span>
+          </div>
+          <p class="text-xs text-gray-400">Creator tier 1 đăng 50 bài → không thấy growth followers → cảm thấy đăng vào hư không → bỏ. <strong class="text-white">Mất 30-50% creator seed sau 6 tháng</strong> nếu không monetize sớm.</p>
+        </div>
+        <div class="p-4 rounded-xl" style="background: rgba(255,255,255,0.03);">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-2xl">📅</span>
+            <strong class="text-sm">Mùa du lịch swing</strong>
+            <span class="text-xs text-yellow-400 ml-auto">Y1+</span>
+          </div>
+          <p class="text-xs text-gray-400">Cao điểm (Tết, hè, lễ) vs thấp điểm: engagement nhảy 3-5x. <strong class="text-white">Cash flow không đoán được</strong>. VC không quen pattern này → khó pitch.</p>
+        </div>
+        <div class="p-4 rounded-xl md:col-span-2" style="background: rgba(255,255,255,0.03);">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-2xl">⚖️</span>
+            <strong class="text-sm">Pháp lý ảnh + NĐ 13</strong>
+            <span class="text-xs text-red-400 ml-auto">M6+</span>
+          </div>
+          <p class="text-xs text-gray-400">VN có Nghị định 13/2023 bảo vệ dữ liệu cá nhân. Chụp ảnh người lạ trong quán → vướng pháp lý. Cần consent flow + blur face → <strong class="text-white">tăng dev cost 15-20%</strong> + tốn engineering time.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- COACH PRESSURES -->
+    <div class="card card-coach p-8 mb-8 reveal">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #fbbf24, #f472b6);">🎓</div>
+        <div>
+          <div class="font-bold text-xl gradient-text-coach">Áp lực đặc thù AI Speaking Coach</div>
+          <div class="text-xs text-gray-500">5 cơn ác mộng đặc biệt cho EdTech AI</div>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="p-4 rounded-xl" style="background: rgba(255,255,255,0.03);">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-2xl">💸</span>
+            <strong class="text-sm">AI cost burn daily</strong>
+            <span class="text-xs text-red-400 ml-auto">M1+</span>
+          </div>
+          <p class="text-xs text-gray-400">Mở dashboard OpenAI mỗi sáng tim đập. Nếu 1 user spam → bill $500/ngày. <strong class="text-white">100k MAU = $300-500k/tháng AI cost</strong> nếu không tối ưu. Mỗi engineering decision phải tính cost.</p>
+        </div>
+        <div class="p-4 rounded-xl" style="background: rgba(255,255,255,0.03);">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-2xl">⚔️</span>
+            <strong class="text-sm">ELSA defensive war</strong>
+            <span class="text-xs text-red-400 ml-auto">M6+</span>
+          </div>
+          <p class="text-xs text-gray-400">Reach 50k MAU → ELSA biết → drop giá 50% + acquihire team + sue về voice scoring patent + block ads channel. <strong class="text-white">Cuộc chiến CAC kéo 12-24 tháng</strong> đốt cash gấp đôi kế hoạch.</p>
+        </div>
+        <div class="p-4 rounded-xl" style="background: rgba(255,255,255,0.03);">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-2xl">🤖</span>
+            <strong class="text-sm">AI hallucination kill</strong>
+            <span class="text-xs text-yellow-400 ml-auto">M3+</span>
+          </div>
+          <p class="text-xs text-gray-400">1 lần AI nói sai grammar nghiêm trọng → user share TikTok mỉa mai → viral negative → khó cứu. <strong class="text-white">EdTech reputation fragile</strong> hơn social app — phụ huynh nhạy cảm.</p>
+        </div>
+        <div class="p-4 rounded-xl" style="background: rgba(255,255,255,0.03);">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-2xl">🐔🥚</span>
+            <strong class="text-sm">Voice dataset chicken-egg</strong>
+            <span class="text-xs text-yellow-400 ml-auto">M0+</span>
+          </div>
+          <p class="text-xs text-gray-400">Cần 1000+ giờ voice VN học sinh để fine-tune STT accent. Mua/thu thập tốn $200-500k. <strong class="text-white">Cần user để có data, cần data để có user</strong>. Vòng luẩn quẩn năm 1-2.</p>
+        </div>
+        <div class="p-4 rounded-xl md:col-span-2" style="background: rgba(255,255,255,0.03);">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-2xl">🏫</span>
+            <strong class="text-sm">B2B school sales cycle dài</strong>
+            <span class="text-xs text-red-400 ml-auto">M6+</span>
+          </div>
+          <p class="text-xs text-gray-400">Bán license trường: 6-12 tháng cycle (đấu thầu, ngân sách năm, phụ huynh approve, hiệu trưởng quyết). <strong class="text-white">Pre-seed cash không đủ chờ</strong> — phải bridge bằng B2C ARR trước. Áp lực hai mặt trận song song.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRESSURE COMPARISON SUMMARY -->
+    <div class="card p-8 reveal" style="background: linear-gradient(135deg, rgba(124,92,255,0.04), rgba(251,191,36,0.04));">
+      <div class="text-center mb-8">
+        <div class="eyebrow">Tóm tắt áp lực</div>
+        <h3 class="text-2xl md:text-3xl font-bold">Bạn chịu được loại nào hơn?</h3>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <div class="text-center mb-4">
+            <div class="font-bold text-xl gradient-text-wandr">Wandr · Áp lực operational</div>
+          </div>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between p-3 rounded-lg" style="background: rgba(124,92,255,0.05);">
+              <span class="text-sm">Cold start anxiety</span>
+              <strong class="text-red-400">9/10</strong>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-lg" style="background: rgba(124,92,255,0.05);">
+              <span class="text-sm">Community ops</span>
+              <strong class="text-yellow-400">8/10</strong>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-lg" style="background: rgba(124,92,255,0.05);">
+              <span class="text-sm">Tech complexity</span>
+              <strong class="text-green-400">5/10</strong>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-lg" style="background: rgba(124,92,255,0.05);">
+              <span class="text-sm">Cost burn</span>
+              <strong class="text-green-400">4/10</strong>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-lg" style="background: rgba(124,92,255,0.05);">
+              <span class="text-sm">Competition</span>
+              <strong class="text-green-400">3/10</strong>
+            </div>
+          </div>
+          <div class="mt-4 p-3 rounded-lg text-xs text-gray-400" style="background: rgba(255,255,255,0.02);">
+            Phù hợp: founder thích build community, chấp nhận xây supply trước. Tech ít rủi ro, cost burn thấp. Sợ nhất 6 tháng đầu cold start.
+          </div>
+        </div>
+
+        <div>
+          <div class="text-center mb-4">
+            <div class="font-bold text-xl gradient-text-coach">Coach · Áp lực tech + financial</div>
+          </div>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between p-3 rounded-lg" style="background: rgba(251,191,36,0.05);">
+              <span class="text-sm">Cold start anxiety</span>
+              <strong class="text-green-400">4/10</strong>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-lg" style="background: rgba(251,191,36,0.05);">
+              <span class="text-sm">Community ops</span>
+              <strong class="text-green-400">3/10</strong>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-lg" style="background: rgba(251,191,36,0.05);">
+              <span class="text-sm">Tech complexity</span>
+              <strong class="text-red-400">9/10</strong>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-lg" style="background: rgba(251,191,36,0.05);">
+              <span class="text-sm">Cost burn</span>
+              <strong class="text-red-400">9/10</strong>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-lg" style="background: rgba(251,191,36,0.05);">
+              <span class="text-sm">Competition</span>
+              <strong class="text-red-400">8/10</strong>
+            </div>
+          </div>
+          <div class="mt-4 p-3 rounded-lg text-xs text-gray-400" style="background: rgba(255,255,255,0.02);">
+            Phù hợp: team AI mạnh, vốn lớn, chấp nhận đua với ELSA + OpenAI. Tech stress cao, cost burn anxiety, B2B sales kiên nhẫn.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BURNOUT RATES -->
+    <div class="mt-12 grid md:grid-cols-4 gap-4">
+      <div class="card p-5 text-center reveal">
+        <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Hours/tuần năm 1</div>
+        <div class="text-2xl font-bold mb-1">
+          <span class="gradient-text-wandr">70-80h</span>
+          <span class="text-gray-500 text-sm"> · </span>
+          <span class="gradient-text-coach">80-90h</span>
+        </div>
+        <div class="text-xs text-gray-400">Coach cao hơn 10h/tuần vì AI dev</div>
+      </div>
+      <div class="card p-5 text-center reveal">
+        <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Lương founder Y1</div>
+        <div class="text-2xl font-bold mb-1">
+          <span class="gradient-text-wandr">$0-1.5k</span>
+          <span class="text-gray-500 text-sm"> · </span>
+          <span class="gradient-text-coach">$0-2k</span>
+        </div>
+        <div class="text-xs text-gray-400">Cả hai đều dưới mức sống</div>
+      </div>
+      <div class="card p-5 text-center reveal">
+        <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Opportunity cost 3 năm</div>
+        <div class="text-2xl font-bold mb-1">
+          <span class="gradient-text-wandr">$120-200k</span>
+          <span class="text-gray-500 text-sm"> · </span>
+          <span class="gradient-text-coach">$150-250k</span>
+        </div>
+        <div class="text-xs text-gray-400">vs lương senior dev VN</div>
+      </div>
+      <div class="card p-5 text-center reveal">
+        <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Tỉ lệ fail estimate</div>
+        <div class="text-2xl font-bold mb-1">
+          <span class="gradient-text-wandr">80-85%</span>
+          <span class="text-gray-500 text-sm"> · </span>
+          <span class="gradient-text-coach">85-90%</span>
+        </div>
+        <div class="text-xs text-gray-400">VN startup base rate cao</div>
+      </div>
+    </div>
+
+    <!-- REALITY CHECK -->
+    <div class="mt-12 card p-8 reveal" style="border-color: rgba(239,68,68,0.3); background: linear-gradient(135deg, rgba(239,68,68,0.04), rgba(124,92,255,0.04));">
+      <div class="text-xs text-red-300 font-semibold uppercase tracking-wider mb-3">🔥 Reality check</div>
+      <h3 class="text-2xl font-bold mb-4">Stats founder VN không ai nói</h3>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <ul class="text-sm text-gray-300 space-y-3">
+            <li>• <strong class="text-white">35% founder ly hôn/chia tay</strong> trong 3 năm đầu (Kaufmann study)</li>
+            <li>• <strong class="text-white">49% founder gặp anxiety/depression</strong> (Cambridge 2023)</li>
+            <li>• <strong class="text-white">30% gặp vấn đề lưng/mắt mãn tính</strong> năm 2</li>
+            <li>• <strong class="text-white">60% co-founder pair tan rã</strong> trước Series A</li>
+          </ul>
+        </div>
+        <div>
+          <ul class="text-sm text-gray-300 space-y-3">
+            <li>• <strong class="text-white">80% startup VN chết</strong> trong 3 năm đầu</li>
+            <li>• <strong class="text-white">12% raise được Series A</strong> sau pre-seed</li>
+            <li>• <strong class="text-white">3% exit thành công</strong> với multiple ≥ 5x</li>
+            <li>• <strong class="text-white">$200-400k lương senior dev VN</strong> 3 năm = opportunity cost</li>
+          </ul>
+        </div>
+      </div>
+      <div class="mt-6 p-4 rounded-xl" style="background: rgba(255,255,255,0.03);">
+        <div class="text-sm text-gray-300"><strong class="text-white">→ Hỏi nghiêm túc trước khi quyết:</strong> Tao có thực sự muốn 3-5 năm trong loại stress này không? Hay chỉ thấy idea hay rồi rush vào?</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VERDICT / RECOMMENDATION -->
+<section id="verdict" class="py-32 relative">
+  <div class="glow glow-purple" style="left: -100px; bottom: -100px;"></div>
+  <div class="glow glow-pink" style="right: -100px; top: 20%; opacity: 0.3;"></div>
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+      <div class="eyebrow">Khuyến nghị</div>
+      <h2 class="text-4xl md:text-5xl font-bold mb-6">Nên làm <span class="gradient-text-coach">AI Speaking Coach</span> trước.</h2>
+      <p class="text-gray-400 text-lg">3 lý do quyết định. 2 điều kiện đi kèm. 1 con đường lui nếu fail.</p>
+    </div>
+
+    <!-- 3 REASONS -->
+    <div class="grid md:grid-cols-3 gap-6 mb-12">
+      <div class="card card-coach p-8 reveal">
+        <div class="text-5xl font-bold gradient-text-coach mb-4">1</div>
+        <h3 class="text-xl font-semibold mb-3">Policy tailwind 20 năm</h3>
+        <p class="text-sm text-gray-400">Đề án 2371/QĐ-TTg ký 10/2024. Chính phủ commit ngân sách giáo dục ngoại ngữ tới 2045. Không có cú hích nào tương đương cho travel-social. Pitch VC dễ hơn 5x với policy alignment.</p>
+      </div>
+      <div class="card card-coach p-8 reveal">
+        <div class="text-5xl font-bold gradient-text-coach mb-4">2</div>
+        <h3 class="text-xl font-semibold mb-3">Demand × Frequency</h3>
+        <p class="text-sm text-gray-400">50M người chịu pain (vs 28M Wandr) × habit daily 20-30 phút (vs travel 1-2 lần/tháng) = engagement gấp 30x. ARPU $10-30 (vs $3-5) → unit economics khả thi sớm hơn 12 tháng.</p>
+      </div>
+      <div class="card card-coach p-8 reveal">
+        <div class="text-5xl font-bold gradient-text-coach mb-4">3</div>
+        <h3 class="text-xl font-semibold mb-3">VC + B2B đường vào sẵn</h3>
+        <p class="text-sm text-gray-400">$280M VC raised EdTech VN 2020-2025 (vs $2M travel-social). Precedent IPO Topica, FUNiX. B2B trường + doanh nghiệp + Bộ GD đường vào rõ. Wandr là loại sản phẩm VC VN chưa quen.</p>
+      </div>
+    </div>
+
+    <!-- CONDITIONS -->
+    <div class="card p-8 mb-12 reveal" style="background: linear-gradient(135deg, rgba(124,92,255,0.06), rgba(251,191,36,0.04));">
+      <div class="text-xs text-purple-300 font-semibold uppercase tracking-wider mb-4">⚠️ 2 điều kiện đi kèm</div>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="p-5 rounded-xl" style="background: rgba(255,255,255,0.03);">
+          <h4 class="font-semibold mb-2">1. Co-founder ML/AI mạnh hoặc thuê được</h4>
+          <p class="text-sm text-gray-400">Realtime STT + LLM + voice gen + pronunciation scoring không phải web app. Nếu chỉ có dev mobile/web → fail. Cần ít nhất 1 người có background ML 3+ năm.</p>
+        </div>
+        <div class="p-5 rounded-xl" style="background: rgba(255,255,255,0.03);">
+          <h4 class="font-semibold mb-2">2. Vốn pre-seed ≥ $500k (lý tưởng $750k-1M)</h4>
+          <p class="text-sm text-gray-400">AI cost burn $3-8/MAU. Với 50k MAU = $200-400k/tháng nếu không tối ưu. Cần buffer build local model + cache + dataset. Bootstrap rất khó.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- BACKUP PLAN -->
+    <div class="card card-wandr p-8 mb-12 reveal">
+      <div class="text-xs text-purple-300 font-semibold uppercase tracking-wider mb-4">🚪 Nếu không thoả 2 điều kiện trên — Plan B: Wandr</div>
+      <div class="grid md:grid-cols-2 gap-6 items-center">
+        <div>
+          <h4 class="text-xl font-semibold mb-3 gradient-text-wandr">Wandr nghiêng hơn nếu:</h4>
+          <ul class="text-sm text-gray-300 space-y-2">
+            <li>• Solo founder hoặc team mobile/community</li>
+            <li>• Vốn pre-seed $150-300k (bootstrap được)</li>
+            <li>• Muốn blue ocean — không cạnh tranh ELSA</li>
+            <li>• Chấp nhận time-to-revenue chậm 6-12 tháng</li>
+            <li>• Quan tâm exit acquihire Klook/Traveloka</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-xl font-semibold mb-3 gradient-text-wandr">Lợi thế còn đó:</h4>
+          <ul class="text-sm text-gray-300 space-y-2">
+            <li>• Cost burn thấp 5-10x</li>
+            <li>• Cạnh tranh thấp — không có incumbent</li>
+            <li>• Network effect mạnh hơn (creator + check-in)</li>
+            <li>• Tech complexity vừa phải, founder build được</li>
+            <li>• Window timing AI flood 2026 chính xác</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- DECISION MATRIX -->
+    <div class="reveal">
+      <div class="text-center mb-8">
+        <div class="eyebrow">Ma trận quyết định</div>
+        <h3 class="text-2xl md:text-3xl font-bold">3 câu hỏi · chọn 1 trong 2</h3>
+      </div>
+
+      <div class="card p-2">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th style="width: 50%;">Câu hỏi</th>
+              <th style="width: 25%;">Trả lời</th>
+              <th style="width: 25%;">→ Chọn</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1.</strong> Có chịu được áp lực AI cost burn $50-100k/tháng với MAU 10k?</td>
+              <td class="num-positive">Có</td>
+              <td class="col-coach"><strong>AI Speaking Coach</strong></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="num-negative">Không</td>
+              <td class="col-wandr"><strong>Wandr</strong></td>
+            </tr>
+            <tr>
+              <td><strong>2.</strong> Có quan hệ Bộ GD hoặc chuỗi trường học?</td>
+              <td class="num-positive">Có</td>
+              <td class="col-coach"><strong>AI Speaking Coach</strong></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="num-negative">Không</td>
+              <td class="col-wandr"><strong>Wandr</strong></td>
+            </tr>
+            <tr>
+              <td><strong>3.</strong> Thích build community + content hay build AI model?</td>
+              <td>Community + content</td>
+              <td class="col-wandr"><strong>Wandr</strong></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>AI model</td>
+              <td class="col-coach"><strong>AI Speaking Coach</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="text-center mt-6 text-sm text-gray-400">Trả lời đa số → chọn theo đa số.</div>
+    </div>
+
+    <!-- FINAL VERDICT -->
+    <div class="mt-16 text-center reveal">
+      <div class="card p-12 max-w-3xl mx-auto" style="background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(244,114,182,0.06)); border-color: rgba(251,191,36,0.3);">
+        <div class="eyebrow" style="color: #fbbf24;">Kết luận cuối</div>
+        <h2 class="text-4xl md:text-5xl font-bold mb-6">
+          <span class="gradient-text-coach">AI Speaking Coach</span>
+        </h2>
+        <p class="text-lg text-gray-300 mb-6">là lựa chọn tốt hơn năm 2026 nếu có team AI + vốn ≥ $500k.</p>
+        <p class="text-sm text-gray-400 mb-8 max-w-xl mx-auto">Thị trường VN cần khẩn cấp hơn (chính sách 20 năm + 50M người + thiếu giáo viên). Capital path + B2B đường vào + exit potential đều rõ hơn. Đổi lại: cạnh tranh ELSA + AI cost burn + tech risk cao hơn.</p>
+        <p class="text-base text-gray-300 mb-8">
+          Nếu không có team AI mạnh + vốn đủ → <strong class="gradient-text-wandr">Wandr</strong> là plan B hợp lý.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="index.html" class="btn-secondary">← Xem Wandr Deck</a>
+          <a href="mailto:vuonghao14298@gmail.com?subject=Discuss%20AI%20Speaking%20Coach" class="btn-primary">Thảo luận AI Speaking Coach</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-white/5 py-12">
+  <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="text-sm text-gray-500">Báo cáo so sánh nội bộ · Hao Vuong · 05/2026</div>
+    <a href="index.html" class="text-sm text-gray-400 hover:text-white">← Quay lại Wandr Pitch Deck</a>
+  </div>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
